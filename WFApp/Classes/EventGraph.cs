@@ -1,61 +1,121 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace WFApp.Classes
 {
     public class EventGraph
     {
         private ProjectEvent PrimaryEvent, FinalEvent;
-        private List<ProjectEvent> CriticalPath;
+        private HashSet<ProjectEvent> PrimaryEvents, FinalEvents;
+        private List<Work> CriticalPath;
+        private List<ProjectEvent> OrderedProjectPath;
         private Dictionary<string, Work> WorksByTitle;
-        private Dictionary<string, ProjectEvent> EventsById;
-        private ProjectEvent[] projectEvents;
+        private Dictionary<string, ProjectEvent> EventsByTitle;
         public EventGraph()
         {
-            CriticalPath = new List<ProjectEvent>();
+            PrimaryEvents = new HashSet<ProjectEvent>();
+            FinalEvents = new HashSet<ProjectEvent>();
+            CriticalPath = new List<Work>();
             WorksByTitle = new Dictionary<string, Work>();
-            EventsById = new Dictionary<string, ProjectEvent>();
+            EventsByTitle = new Dictionary<string, ProjectEvent>();
         }
         public void AddWork(Work work)
         {
             ProjectEvent eventTemp = null;
-            if (!EventsById.TryGetValue(work.PreviousEventId, out eventTemp))
+            if (!EventsByTitle.TryGetValue(work.PreviousEventTitle, out eventTemp))
             {
-                eventTemp = new ProjectEvent(work.PreviousEventId);
-                EventsById.Add(work.PreviousEventId, eventTemp);
+                eventTemp = new ProjectEvent(work.PreviousEventTitle);
+                EventsByTitle.Add(work.PreviousEventTitle, eventTemp);
+                PrimaryEvents.Add(eventTemp);
             }
             work.PreviousEvent = eventTemp;
             eventTemp.FollowingWorks.Add(work);
-            if (!EventsById.TryGetValue(work.FollowingEventId, out eventTemp))
+            FinalEvents.Remove(eventTemp);
+            if (!EventsByTitle.TryGetValue(work.FollowingEventTitle, out eventTemp))
             {
-                eventTemp = new ProjectEvent(work.FollowingEventId);
-                EventsById.Add(work.FollowingEventId, eventTemp);
+                eventTemp = new ProjectEvent(work.FollowingEventTitle);
+                EventsByTitle.Add(work.FollowingEventTitle, eventTemp);
+                FinalEvents.Add(eventTemp);
             }
             work.FollowingEvent = eventTemp;
             WorksByTitle.Add(work.Title, work);
             eventTemp.PreviousWorks.Add(work);
+            PrimaryEvents.Remove(eventTemp);
         }
-        private void SetIds() { 
-        
-        }
-        public void Init()
+        private void OutsideEventsUnion()
         {
-            projectEvents = new ProjectEvent[EventsById.Count + 1];
-            foreach (var eventKV in EventsById)
+            var primaryList = PrimaryEvents.ToList();
+            PrimaryEvent = primaryList[0];
+            if (PrimaryEvents.Count > 1)
+                for (int i = 1; i < primaryList.Count; i++)
+                {
+                    foreach (var fw in primaryList[i].FollowingWorks)
+                    {
+                        fw.PreviousEventTitle = PrimaryEvent.Title;
+                        fw.PreviousEvent = PrimaryEvent;
+                        PrimaryEvent.FollowingWorks.Add(fw);
+                    }
+                }
+            var finalList = FinalEvents.ToList();
+            FinalEvent = finalList[0];
+            if (FinalEvents.Count > 1)
+                for (int i = 1; i < finalList.Count; i++)
+                {
+                    foreach (var fw in finalList[i].PreviousWorks)
+                    {
+                        fw.FollowingEventTitle = FinalEvent.Title;
+                        fw.FollowingEvent = FinalEvent;
+                        FinalEvent.PreviousWorks.Add(fw);
+                    }
+                }
+        }
+        private void Init() 
+        {
+            OutsideEventsUnion();
+            
+            var id = 0u;
+            OrderedProjectPath = new List<ProjectEvent>(EventsByTitle.Count);
+            var visitideEvents = new HashSet<ProjectEvent>();
+            var events = new List<ProjectEvent>();
+
+            events.Add(PrimaryEvent);
+            
+            while (events.Count != 0)
             {
-                projectEvents[eventKV.Key] = eventKV.Value;
+                List<ProjectEvent> newEvents = new List<ProjectEvent>();
+                foreach (var currEvent in events)
+                {                                  
+                    if (visitideEvents.Add(currEvent))
+                    {
+                        currEvent.Id = ++id;
+                        OrderedProjectPath.Add(currEvent);
+                    }                        
+                    currEvent.FollowingWorks.Where(w => w.FollowingEvent.PreviousWorks
+                                                .All(v => visitideEvents
+                                                    .Contains(v.PreviousEvent)))
+                                                .ToList()
+                                             .ForEach(v => newEvents
+                                                .Add(v.FollowingEvent));
+                }
+                events = newEvents;
             }
-            //PrimaryEvent = EventsById.FirstOrDefault(e => e.Value.PreviousWorks.Count == 0).Value;
-            //FinalEvent = EventsById.FirstOrDefault(e => e.Value.FollowingWorks.Count == 0).Value;
+        }
+        private void ESCalc()
+        {
+            for (int i = 1; i < OrderedProjectPath.Count; i++)
+                OrderedProjectPath[i].ES = OrderedProjectPath[i].PreviousWorks.Max(fw => fw.Duration + fw.PreviousEvent.ES);
+        }
+        private void LCCalc()
+        {
+            FinalEvent.LC = FinalEvent.ES;
+            for (int i = OrderedProjectPath.Count - 2; i >= 0; i--)
+                OrderedProjectPath[i].LC = OrderedProjectPath[i].FollowingWorks.Min(fw => fw.FollowingEvent.LC - fw.Duration);
         }
         public void FindCriticalPath()
         {
             Init();
-            var eventTemp = PrimaryEvent;
-            eventTemp.ES =
-            foreach (Work workF in eventTemp.PreviousWorks)
-            {
-
-            }
+            ESCalc();
+            LCCalc();
         }
     }
 }

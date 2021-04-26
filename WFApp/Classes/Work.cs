@@ -9,14 +9,14 @@ namespace WFApp.Classes
         public uint Id = 0;
         public ProjectEvent PreviousEvent, FollowingEvent;
         public float Duration, DurationMin, DurationMax, ResourcesMin, ResourcesMax;
-        public string Title, PreviousEventId, FollowingEventId;
+        public string Title, PreviousEventTitle, FollowingEventTitle;
         public Work(string title, float duration, float durationMin, float durationMax, 
                     float resourcesMin, float resourcesMax,
-                    string prevEventId, string followEventId)
+                    string prevEventTitle, string followEventTitle)
         {
             Title = title;
-            PreviousEventId = prevEventId;
-            FollowingEventId = followEventId;
+            PreviousEventTitle = prevEventTitle;
+            FollowingEventTitle = followEventTitle;
             DurationMax = durationMax;
             Duration = duration;
             DurationMin = durationMin;
