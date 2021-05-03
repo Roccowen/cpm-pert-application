@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace WFApp.Classes
+namespace QSBMODLibrary.Classes
 {
     public class ProjectEvent
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace WFApp.Classes
+namespace QSBMODLibrary.Classes
 {
     public class EventGraph
     {
@@ -12,10 +12,39 @@ namespace WFApp.Classes
         private List<ProjectEvent> OrderedProjectPath, CriticalPath;
         private Dictionary<string, Work> WorksByTitle;
         private Dictionary<string, ProjectEvent> EventsByTitle;
+        public float Cost
+        {
+            get
+            {
+                try
+                {
+                    return OrderedProjectWorks.Sum(g => g.Resources);
+                }
+                catch (System.Exception ex)
+                {
+                    Loger.Msg(ex);
+                    return 0;
+                }                
+            }
+        }
+        public float Duration
+        {
+            get
+            {
+                try
+                {
+                    return CriticalWorks.Sum(g => g.Duration);
+                }
+                catch (System.Exception ex)
+                {
+                    Loger.Msg(ex);
+                    return 0;
+                }         
+            }
+        }
         public EventGraph()
         {
             WorksDuringsCP = new List<List<Work>>();
-            OrderedProjectWorks = new List<Work>();
             CriticalWorks = new List<Work>();
             PrimaryEvents = new HashSet<ProjectEvent>();
             FinalEvents = new HashSet<ProjectEvent>();
@@ -25,6 +54,7 @@ namespace WFApp.Classes
         }
         public void AddWork(Work work)
         {
+            WorksByTitle.Add(work.Title, work);
             ProjectEvent eventTemp = null;
             if (!EventsByTitle.TryGetValue(work.FirstEventTitle, out eventTemp))
             {
@@ -41,8 +71,7 @@ namespace WFApp.Classes
                 EventsByTitle.Add(work.SecondEventTitle, eventTemp);
                 FinalEvents.Add(eventTemp);
             }
-            work.SecondEvent = eventTemp;
-            WorksByTitle.Add(work.Title, work);
+            work.SecondEvent = eventTemp;            
             eventTemp.PreviousWorks.Add(work);
             PrimaryEvents.Remove(eventTemp);
         }
@@ -54,8 +83,7 @@ namespace WFApp.Classes
                 throw new System.Exception("Нет конечного события");
         }
         private void OutsideEventsUnion()
-        {
-            
+        {           
             var primaryList = PrimaryEvents.ToList();
             PrimaryEvent = primaryList[0];
             if (PrimaryEvents.Count > 1)
@@ -85,22 +113,22 @@ namespace WFApp.Classes
         {
             CheckStartAndFin();
             OutsideEventsUnion();
-            uint id = 0u, cpid = 0u;
             OrderedProjectPath = new List<ProjectEvent>(EventsByTitle.Count);
+            OrderedProjectWorks = new List<Work>(WorksByTitle.Count);
+            uint id = 0u, cpid = 0u;
             var visitideEvents = new HashSet<ProjectEvent>();
             var events = new List<ProjectEvent>();
             events.Add(PrimaryEvent);      
-            while (events.Count != 0)
+            while (events.Count > 0)
             {
-                List<ProjectEvent> newEvents = new List<ProjectEvent>();
-                var w = new List<Work>();
-                events.ForEach(e => { w.AddRange(e.FollowingWorks);
-                    e.FollowingWorks.ForEach(w => w.CPId = cpid); });
-                if (w.Count > 0)
-                    WorksDuringsCP.Add(w);
-                cpid++;
+                var tempEvents = new List<ProjectEvent>();
+                var tempWorks = new List<Work>();
+
                 foreach (var currEvent in events)
-                {                                  
+                {
+                    tempWorks.AddRange(currEvent.FollowingWorks);
+                    currEvent.FollowingWorks.ForEach(w => w.CPId = cpid);
+
                     if (visitideEvents.Add(currEvent))
                     {
                         currEvent.Id = id++;
@@ -111,10 +139,16 @@ namespace WFApp.Classes
                                                 .All(v => visitideEvents
                                                     .Contains(v.FirstEvent)))
                                                 .ToList()
-                                             .ForEach(v => newEvents
+                                             .ForEach(v => tempEvents
                                                 .Add(v.SecondEvent));
                 }
-                events = newEvents;
+                events = tempEvents;
+
+                if (tempWorks.Count > 0)
+                {
+                    WorksDuringsCP.Add(tempWorks);
+                    cpid++;
+                }
             }
         }
         private void EventESLSCalc()
@@ -124,18 +158,6 @@ namespace WFApp.Classes
             FinalEvent.LS = FinalEvent.ES;
             for (int i = OrderedProjectPath.Count - 2; i >= 0; i--)
                 OrderedProjectPath[i].LS = OrderedProjectPath[i].FollowingWorks.Min(fw => fw.SecondEvent.LS - fw.Duration);
-        }
-        public float GetCost()
-        {
-            var c = 0f;
-            OrderedProjectWorks.ForEach(g => c += g.Resources);
-            return c;
-        }
-        public float GetDuration()
-        {
-            var d = 0f;
-            OrderedProjectWorks.ForEach(g => d += g.Duration);
-            return d;
         }
         private void WorksCoefsCalc()
         {
@@ -149,7 +171,7 @@ namespace WFApp.Classes
                 w.PR = w.SecondEvent.LS - w.FirstEvent.LS - w.Duration;
                 w.IR = w.SecondEvent.ES - w.FirstEvent.LS - w.Duration;
                 w.FreeR = w.SecondEvent.ES - w.FirstEvent.ES - w.Duration;
-                w.K = 1 - w.FR / (GetCost() - WorksDuringsCP[(int)w.CPId].FirstOrDefault(w => w.IsCritical == true).Duration);
+                w.K = 1 - w.FR / (Cost - WorksDuringsCP[(int)w.CPId].FirstOrDefault(w => w.IsCritical == true).Duration);
             }
         }
         public List<ProjectEvent> FindCriticalPath()
@@ -174,5 +196,6 @@ namespace WFApp.Classes
             WorksCoefsCalc();
             return CriticalPath;
         }
+        public void OptimizeCriticalPath
     }
 }
