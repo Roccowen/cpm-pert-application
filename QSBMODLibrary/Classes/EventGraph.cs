@@ -7,7 +7,7 @@ namespace QSBMODLibrary.Classes
     {
         private ProjectEvent PrimaryEvent, FinalEvent;
         private HashSet<ProjectEvent> PrimaryEvents, FinalEvents;
-        private List<List<Work>> WorksDuringsCP;
+        private List<List<Work>> WorksStages;
         public List<Work> OrderedProjectWorks, CriticalWorks;
         private List<ProjectEvent> OrderedProjectPath, CriticalPath;
         private Dictionary<string, Work> WorksByTitle;
@@ -44,7 +44,7 @@ namespace QSBMODLibrary.Classes
         }
         public EventGraph()
         {
-            WorksDuringsCP = new List<List<Work>>();
+            WorksStages = new List<List<Work>>();
             CriticalWorks = new List<Work>();
             PrimaryEvents = new HashSet<ProjectEvent>();
             FinalEvents = new HashSet<ProjectEvent>();
@@ -82,7 +82,7 @@ namespace QSBMODLibrary.Classes
             if (FinalEvents.Count == 0)
                 throw new System.Exception("Нет конечного события");
         }
-        private void OutsideEventsUnion()
+        private void OutsideEventsUnioning()
         {           
             var primaryList = PrimaryEvents.ToList();
             PrimaryEvent = primaryList[0];
@@ -112,7 +112,7 @@ namespace QSBMODLibrary.Classes
         private void Init() 
         {
             CheckStartAndFin();
-            OutsideEventsUnion();
+            OutsideEventsUnioning();
             OrderedProjectPath = new List<ProjectEvent>(EventsByTitle.Count);
             OrderedProjectWorks = new List<Work>(WorksByTitle.Count);
             uint id = 0u, cpid = 0u;
@@ -146,7 +146,7 @@ namespace QSBMODLibrary.Classes
 
                 if (tempWorks.Count > 0)
                 {
-                    WorksDuringsCP.Add(tempWorks);
+                    WorksStages.Add(tempWorks);
                     cpid++;
                 }
             }
@@ -171,7 +171,7 @@ namespace QSBMODLibrary.Classes
                 w.PR = w.SecondEvent.LS - w.FirstEvent.LS - w.Duration;
                 w.IR = w.SecondEvent.ES - w.FirstEvent.LS - w.Duration;
                 w.FreeR = w.SecondEvent.ES - w.FirstEvent.ES - w.Duration;
-                w.K = 1 - w.FR / (Cost - WorksDuringsCP[(int)w.CPId].FirstOrDefault(w => w.IsCritical == true).Duration);
+                w.K = 1 - w.FR / (Cost - WorksStages[(int)w.CPId].FirstOrDefault(w => w.IsCritical == true).Duration);
             }
         }
         public List<ProjectEvent> FindCriticalPath()
@@ -196,6 +196,15 @@ namespace QSBMODLibrary.Classes
             WorksCoefsCalc();
             return CriticalPath;
         }
-        public void OptimizeCriticalPath
+        public void OptimizeCriticalPath()
+        {
+            
+            foreach (var stage in WorksStages)
+            {
+                float reserve = 0;
+                var worksDurationsLimit = stage.Max(w => w.DurationMin);
+
+            }
+        }
     }
 }

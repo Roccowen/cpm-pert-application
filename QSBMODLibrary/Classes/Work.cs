@@ -18,8 +18,7 @@ namespace QSBMODLibrary.Classes
         public readonly float DurationMin, DurationMax, ResourcesMin, ResourcesMax;
         public readonly string Title;
         public float Duration = 0, Resources = 0,
-            ES = 0, LS = 0, EE = 0, LE = 0, FR = 0, PR = 0, FreeR = 0, IR = 0, K = 0, tgA = 0, tgB = 0,
-            Exp = 0, Dis = 0;
+            ES = 0, LS = 0, EE = 0, LE = 0, FR = 0, PR = 0, FreeR = 0, IR = 0, K = 0, tgA = 0;
         public string FirstEventTitle, SecondEventTitle;
         public ProjectEvent FirstEvent, SecondEvent;    
         public Work(string title, float durationMin, float durationMax,
@@ -42,8 +41,6 @@ namespace QSBMODLibrary.Classes
             ResourcesMin = resourcesMin;
             Resources = resourcesMin;
             tgA = (ResourcesMax - ResourcesMin) / (DurationMax - DurationMin);
-            tgB = (DurationMax - DurationMin) / (ResourcesMax - ResourcesMin);
-            Exp = (2 * durationMin + 3 * durationMax)/ 5;
         }
         public Work(string title, float duration, float durationMin, float durationMax,
             float resources, float resourcesMin, float resourcesMax,
@@ -59,8 +56,6 @@ namespace QSBMODLibrary.Classes
             ResourcesMin = resourcesMin;
             Resources = resources;
             tgA = (ResourcesMax - ResourcesMin) / (DurationMax - DurationMin);
-            tgB = (DurationMax - DurationMin) / (ResourcesMax - ResourcesMin);
-            Exp = (2 * durationMin + 3 * durationMax) / 5;
         }
     }
 }
