@@ -10,8 +10,15 @@ namespace QSBMODLibrary.Classes
         private List<List<Work>> WorksStages;
         public List<Work> OrderedProjectWorks, CriticalWorks;
         private List<ProjectEvent> OrderedProjectPath, CriticalPath;
-        private Dictionary<string, Work> WorksByTitle;
-        private Dictionary<string, ProjectEvent> EventsByTitle;
+        public Dictionary<string, Work> WorksByTitle { get; }
+        public Dictionary<string, ProjectEvent> EventsByTitle { get; }
+        public int WorksCount
+        {
+            get
+            {
+                return WorksByTitle.Count();
+            }
+        }
         public float Cost
         {
             get

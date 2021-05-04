@@ -53,7 +53,7 @@ namespace QSBMODLibrary.Classes
             using (StreamWriter sw = new StreamWriter(path))
             {
                 sw.WriteLine("Title;t;T_min;T_max;c;C_min;C_max;FirstEventTitle;SecondEventTitle;");
-                foreach (var work in graph.OrderedProjectWorks)
+                foreach (var work in graph.WorksByTitle.Values)
                     sw.WriteLine($"{work.Title};{work.Duration};{work.DurationMin};{work.DurationMax};" +
                         $"{work.Resources};{work.ResourcesMin};{work.ResourcesMax};{work.FirstEventTitle};{work.SecondEventTitle};");
             }
