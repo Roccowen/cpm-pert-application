@@ -54,10 +54,10 @@ namespace WinFormsQSBMOD
 
         private readonly Stack<TextBox[]> textBoxesRows = new Stack<TextBox[]>();
         private readonly string[] titles = new string[]
-            {"Название работы","t_ij","T_min","T_max","c","C_min","C_max","Начальное событие","Конечное событие"};
+            {"Название работы","t_ij","T_min","T_max","c","C_min","C_max","Нач. событие","Конеч. событие"};
         private readonly bool[] stringTb = new bool[] { true, false, false, false, false, false, false, true, true };
         private readonly int columnsCnt = 9, 
-            stringTextBoxWidth = 90, numericTextBoxWidth = 50, textBoxHeight = 23, 
+            stringTextBoxWidth = 100, numericTextBoxWidth = 60, textBoxHeight = 25, 
             marginHor = 5, marginWid = 5, x = 5, y = 30;
 
         public Form1()
@@ -119,7 +119,8 @@ namespace WinFormsQSBMOD
         }        
         private void DelAllWorks()
         {
-            for (int i = 0; i < textBoxesRows.Count; i++)
+            int count = textBoxesRows.Count;
+            for (int i = 0; i < count; i++)
                 DelLastWork();
         }
         private void DelLastWork()

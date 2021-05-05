@@ -41,32 +41,40 @@ namespace ConsoleApp
             timer.Start();
             foreach (var work in works)
                 graph.AddWork(work);
-            var cp = graph.FindCriticalPath();            
+            var analyzer = new EventGraphAnalyzer(graph);         
+            Console.WriteLine($"  КП продолжительность : {analyzer.Duration}");
+            Console.WriteLine($"  КП стоимость : {analyzer.Cost}");
+            Console.Write("  КП : ");
+            foreach (var w in analyzer.CriticalWorks)
+                Console.Write($"{w.Title} ");
+            Console.Write(String.Format("\n\n  {0, -5} {1, -10} {2, -7} {3, -7} {4, -7} {5, -7} {6, -5} {7, -5} {8, -5} {9, -5} {10, -6} {11, -13} {12, -7}\n\n",
+                                                "№", "Название", "t", "c", "T_min", "C_max", "РН", "ПН", "РО", "ПО", "Резерв", "Напряженность", "tgA"));
+            foreach (var w in analyzer.Works)
+                Console.Write(String.Format("  {0, -5} {1, -10} {2, -7} {3, -7} {4, -7} {5, -7} {6, -5} {7, -5} {8, -5} {9, -5} {10, -6} {11, -13} {12, -7}\n",
+                                               ++n, w.Title, Math.Round(w.Duration, 2), Math.Round(w.Resources, 2), Math.Round(w.DurationMin, 2), Math.Round(w.ResourcesMax, 2), w.ES, w.LS, w.EE, w.LE, isKrit(w.FR, 0), isKrit((float)Math.Round(w.K, 5), 1), Math.Round(w.tgA, 5)));
+            analyzer.FullOptimize();
+            Console.Write("\n\n  После оптимизации:\n\n");
+            Console.WriteLine($"  КП продолжительность : {analyzer.Duration}");
+            Console.WriteLine($"  КП стоимость : {analyzer.Cost}");
+            foreach (var w in analyzer.Works)
+                Console.Write(String.Format("  {0, -5} {1, -10} {2, -7} {3, -7} {4, -7} {5, -7} {6, -5} {7, -5} {8, -5} {9, -5} {10, -6} {11, -13} {12, -7}\n",
+                                               ++n, w.Title, Math.Round(w.Duration, 2), Math.Round(w.Resources, 2), Math.Round(w.DurationMin, 2), Math.Round(w.ResourcesMax, 2), w.ES, w.LS, w.EE, w.LE, isKrit(w.FR, 0), isKrit((float)Math.Round(w.K, 5), 1), Math.Round(w.tgA, 5)));
             Console.WriteLine($"  время : {timer.ElapsedMilliseconds / 1000f} s");
             Console.WriteLine($"  память : {Process.GetCurrentProcess().PrivateMemorySize64 / 1024} kB");
-            Console.WriteLine($"  КП продолжительность : {cp[cp.Count - 1].ES}");
-            Console.WriteLine($"  КП стоимость : {graph.Cost}");
-            Console.Write("  КП : ");
-            cp.ForEach(c => Console.Write($"{c.Title} "));
-            Console.Write(String.Format("\n\n  {0, -5} {1, -10} {2, -5} {3, -5} {4, -5} {5, -5} {6, -6} {7, -13} {8, -7}\n\n",
-                                                "№", "Название", "РН", "ПН", "РО", "ПО", "Резерв", "Напряженность", "tgA"));
-            foreach (var w in graph.OrderedProjectWorks)
-                Console.Write(String.Format("  {0, -5} {1, -10} {2, -5} {3, -5} {4, -5} {5, -5} {6, -6} {7, -13} {8, -7}\n",
-                                                ++n, w.Title, w.ES, w.LS, w.EE, w.LE, isKrit(w.FR, 0), isKrit((float)Math.Round(w.K, 5), 1), Math.Round(w.tgA, 5)));
         }
         static void Main(string[] args)
         {
-            //var test1 = new List<Work> {
-            //    new Work("1-2", 3,  5,    23,    26.2f, "1", "2"),
-            //    new Work("1-3", 1,  2,    9.8f,  12,    "1", "3"),
-            //    new Work("1-4", 6.5f,  8, 22.5f, 27,    "1", "4"),
-            //    new Work("2-5", 3.5f,  5, 21.3f, 24,    "2", "5"),
-            //    new Work("3-4", 6,  9,    39.7f, 42.3f, "3", "4"),
-            //    new Work("3-5", 4,  7,    9.8f,  13.6f, "3", "5"),
-            //    new Work("4-5", 7.5f, 11, 46.8f, 51.7f, "4", "5"),
-            //    new Work("4-6", 5,  6,    17.2f, 19,    "4", "6"),
-            //    new Work("5-6", 5,  7,    34.6f, 41.1f, "5", "6")};
-            //Test(test1);
+            var test1 = new List<Work> {
+                new Work("1-2", 3,  5,    23,    26.2f, "1", "2"),
+                new Work("1-3", 1,  2,    9.8f,  12,    "1", "3"),
+                new Work("1-4", 6.5f,  8, 22.5f, 27,    "1", "4"),
+                new Work("2-5", 3.5f,  5, 21.3f, 24,    "2", "5"),
+                new Work("3-4", 6,  9,    39.7f, 42.3f, "3", "4"),
+                new Work("3-5", 4,  7,    9.8f,  13.6f, "3", "5"),
+                new Work("4-5", 7.5f, 11, 46.8f, 51.7f, "4", "5"),
+                new Work("4-6", 5,  6,    17.2f, 19,    "4", "6"),
+                new Work("5-6", 5,  7,    34.6f, 41.1f, "5", "6")};
+            Test(test1);
             //double[,] testSimp1 = {
             //                    {25, -3,  5},
             //                    {30, -2,  5},

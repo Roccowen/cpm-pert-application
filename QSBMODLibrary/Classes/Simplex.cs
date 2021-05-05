@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace QSBMODLibrary.Classes
 {
     public class Simplex
     {
         // https://vscode.ru/prog-lessons/simpleks-metod-realizatsiya.html.
-        //source - симплекс таблица без базисных переменных
-        double[,] table; //симплекс таблица
-
+        // source - Симплекс таблица без базисных переменных.
+        double[,] table; // Симплекс таблица.
         int m, n;
-
-        List<int> basis; //список базисных переменных
-
+        List<int> basis; // Список базисных переменных.
         public Simplex(double[,] source)
         {
             m = source.GetLength(0);
@@ -32,21 +25,19 @@ namespace QSBMODLibrary.Classes
                     else
                         table[i, j] = 0;
                 }
-                //выставляем коэффициент 1 перед базисной переменной в строке
+                // Выставляем коэффициент 1 перед базисной переменной в строке.
                 if ((n + i) < table.GetLength(1))
                 {
                     table[i, n + i] = 1;
                     basis.Add(n + i);
                 }
             }
-
             n = table.GetLength(1);
         }
-
-        //result - в этот массив будут записаны полученные значения X
+        // result - в этот массив будут записаны полученные значения X.
         public double[,] Calculate(double[] result)
         {
-            int mainCol, mainRow; //ведущие столбец и строка
+            int mainCol, mainRow; // Ведущие столбец и строка.
 
             while (!IsItEnd())
             {
@@ -69,8 +60,7 @@ namespace QSBMODLibrary.Classes
                 }
                 table = new_table;
             }
-
-            //заносим в result найденные значения X
+            // Заносим в result найденные значения X.
             for (int i = 0; i < result.Length; i++)
             {
                 int k = basis.IndexOf(i + 1);
@@ -79,10 +69,8 @@ namespace QSBMODLibrary.Classes
                 else
                     result[i] = 0;
             }
-
             return table;
         }
-
         private bool IsItEnd()
         {
             bool flag = true;
@@ -98,7 +86,6 @@ namespace QSBMODLibrary.Classes
 
             return flag;
         }
-
         private int findMainCol()
         {
             int mainCol = 1;
@@ -109,7 +96,6 @@ namespace QSBMODLibrary.Classes
 
             return mainCol;
         }
-
         private int findMainRow(int mainCol)
         {
             int mainRow = 0;

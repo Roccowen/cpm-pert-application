@@ -26,11 +26,8 @@ namespace QSBMODLibrary.Classes
                     string startEventTitle, string secondEventTitle)
         {
             if (title.Contains(';') || startEventTitle.Contains(';') || secondEventTitle.Contains(';'))
-            {
-                Loger.Msg("InvalidOperationException(\"Title can't contain \";\"\")");
                 throw new InvalidOperationException("Title can't contain \";\"");
-            }
-                
+
             Title = title;
             FirstEventTitle = startEventTitle;
             SecondEventTitle = secondEventTitle;
@@ -46,6 +43,8 @@ namespace QSBMODLibrary.Classes
             float resources, float resourcesMin, float resourcesMax,
             string startEventTitle, string secondEventTitle)
         {
+            if (title.Contains(';') || startEventTitle.Contains(';') || secondEventTitle.Contains(';'))
+                throw new InvalidOperationException("Title can't contain \";\"");
             Title = title;
             FirstEventTitle = startEventTitle;
             SecondEventTitle = secondEventTitle;
@@ -56,6 +55,10 @@ namespace QSBMODLibrary.Classes
             ResourcesMin = resourcesMin;
             Resources = resources;
             tgA = (ResourcesMax - ResourcesMin) / (DurationMax - DurationMin);
+        }
+        public Work()
+        {
+            tgA = 100;
         }
     }
 }

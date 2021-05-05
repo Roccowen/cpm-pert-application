@@ -139,4 +139,10 @@
   <data name="_007_delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\resources\iconsc\007-delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="_008_bar_chart_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\iconsc\008-bar-chart-red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_009_research" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\iconsc\009-research.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
