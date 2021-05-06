@@ -7,7 +7,7 @@ namespace ConsoleApp
 {
     class Program
     {
-        static void GetSymplexRes(double[,] table, double[] result)
+        static void TestSimplex(double[,] table, double[] result)
         {
             Console.WriteLine("\nВход:");
             for (int i = 0; i < table.GetLength(0); i++)
@@ -34,7 +34,7 @@ namespace ConsoleApp
         }
         static void Test(List<Work> works)
         {
-            Func<float, float, string> isKrit = (x, y) => x == y ? "Крит." : x.ToString(); 
+            static string isKrit(float x, float y) => x == y ? "Крит." : x.ToString();
             var n = 0;
             var timer = new Stopwatch();
             var graph = new EventGraph();
@@ -75,6 +75,7 @@ namespace ConsoleApp
                 new Work("4-6", 5,  6,    17.2f, 19,    "4", "6"),
                 new Work("5-6", 5,  7,    34.6f, 41.1f, "5", "6")};
             Test(test1);
+            
             //double[,] testSimp1 = {
             //                    {25, -3,  5},
             //                    {30, -2,  5},
@@ -83,36 +84,7 @@ namespace ConsoleApp
             //                    { 0, -6, -5}
             //};
             //double[] testSimpRes1 = new double[2];
-            //GetSymplexRes(testSimp1, testSimpRes1);
-            //double[,] testSimp2 = {
-            //                    {0, -1,  0, 0},
-            //                    {3.2, 1, 0, 0},
-            //                    {2, 0.625, 0, 0},
-            //                    {0, -0.625, 0, 0},
-            //                    {0, 0, -1, 0},
-            //                    {2.2, 0, 1, 0},
-            //                    {1, 0, 0.454, 0},
-            //                    {0, 0, -0.454, 0},
-            //                    {0, 0, 0, -1},
-            //                    {4.5, 0, 0, 1 },
-            //                    {1.5, 0, 0, 0.333 },
-            //                    {0, 0, 0, -0.333 },
-            //                    {0, -0.625, 0.454, 0 },
-            //                    {0, 0.625, -0.454, 0 },
-            //                    {0, 0, -0.454, 0.333 },
-            //                    {0, 0, 0.454, -0.333 },
-            //                    {0, -0.625, -0.454, -0.333 }
-            //};
-            //double[] testSimpRes2 = new double[3];
-            //GetSymplexRes(testSimp2, testSimpRes2);
-            //for (int i = 0; i < testSimp2.GetLength(0); i++)
-            //    Console.WriteLine($"{testSimp2[i, 0]} >= {testSimp2[i, 1] * 1.598 + testSimp2[i, 2] * 1.598 + testSimp2[i, 3] * 1.598} " +
-            //        $"res : {testSimp2[i, 0] >= (testSimp2[i, 1] * 1.598 + testSimp2[i, 2] * 1.598 + testSimp2[i, 3] * 1.598)}");
-            //Console.WriteLine();
-            //Console.WriteLine();
-            //for (int i = 0; i < testSimp1.GetLength(0); i++)
-            //    Console.WriteLine($"{testSimp1[i, 0]} >= {testSimp1[i, 1] * 10 + testSimp1[i, 2] * 10} " +
-            //        $"res : {testSimp1[i, 0] >= (testSimp1[i, 1] * 10 + testSimp1[i, 2] * 10)}");          
+            //TestSimplex(testSimp1, testSimpRes1);             
         }
     }
 }

@@ -16,8 +16,8 @@ namespace QSBMODLibrary.Classes
         }
         public void AddWork(Work work)
         {
-            WorksByTitle.Add(work.Title, work);
             ProjectEvent eventTemp;
+            WorksByTitle.Add(work.Title, work);
             if (!EventsByTitle.TryGetValue(work.FirstEventTitle, out eventTemp))
             {
                 eventTemp = new ProjectEvent(work.FirstEventTitle);

@@ -7,8 +7,9 @@ namespace QSBMODLibrary.Classes
         // https://vscode.ru/prog-lessons/simpleks-metod-realizatsiya.html.
         // source - Симплекс таблица без базисных переменных.
         double[,] table; // Симплекс таблица.
-        int m, n;
-        List<int> basis; // Список базисных переменных.
+        private readonly int m;
+        private readonly int n;
+        readonly List<int> basis; // Список базисных переменных.
         public Simplex(double[,] source)
         {
             m = source.GetLength(0);
@@ -41,8 +42,8 @@ namespace QSBMODLibrary.Classes
 
             while (!IsItEnd())
             {
-                mainCol = findMainCol();
-                mainRow = findMainRow(mainCol);
+                mainCol = FindMainCol();
+                mainRow = FindMainRow(mainCol);
                 basis[mainRow] = mainCol;
 
                 double[,] new_table = new double[m, n];
@@ -86,7 +87,7 @@ namespace QSBMODLibrary.Classes
 
             return flag;
         }
-        private int findMainCol()
+        private int FindMainCol()
         {
             int mainCol = 1;
 
@@ -96,7 +97,7 @@ namespace QSBMODLibrary.Classes
 
             return mainCol;
         }
-        private int findMainRow(int mainCol)
+        private int FindMainRow(int mainCol)
         {
             int mainRow = 0;
 

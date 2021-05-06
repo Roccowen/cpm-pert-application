@@ -7,13 +7,13 @@ namespace QSBMODLibrary.Classes
 {
     public class EventGraphAnalyzer
     {
-        private readonly EventGraph eventGraph;        
+        private ProjectEvent primaryEvent, finalEvent;
         
-        private List<Work> orderedProjectWorks, criticalWorks;
-        private List<ProjectEvent> orderedProjectPath, criticalPath;
-        private ProjectEvent primaryEvent, finalEvent;        
-        private List<List<Work>> worksStages;
-        private List<(float t, float c)> callback;
+        private readonly EventGraph currentEventGraph;                
+        private readonly List<Work> orderedProjectWorks, criticalWorks;
+        private readonly List<ProjectEvent> orderedProjectPath, criticalPath;               
+        private readonly List<List<Work>> worksStages;
+        private readonly List<(float t, float c)> callback;
         private bool isOptimized = false;
         public bool IsOptimized
         {
@@ -26,7 +26,7 @@ namespace QSBMODLibrary.Classes
         {
             get
             {
-                return eventGraph.WorksByTitle.Count();
+                return currentEventGraph.WorksByTitle.Count();
             }
         }
         public float Cost
@@ -37,7 +37,7 @@ namespace QSBMODLibrary.Classes
                 {
                     return orderedProjectWorks.Sum(g => g.Resources);
                 }
-                catch (System.Exception ex)
+                catch (System.Exception)
                 {
                     return 0;
                 }
@@ -51,7 +51,7 @@ namespace QSBMODLibrary.Classes
                 {
                     return criticalWorks.Sum(g => g.Duration);
                 }
-                catch (System.Exception ex)
+                catch (System.Exception)
                 {
                     return 0;
                 }
@@ -61,7 +61,7 @@ namespace QSBMODLibrary.Classes
         {
             get
             {
-                foreach (var w in eventGraph.WorksByTitle.Values)
+                foreach (var w in currentEventGraph.WorksByTitle.Values)
                     yield return w;
             }
         }
@@ -73,31 +73,32 @@ namespace QSBMODLibrary.Classes
                     yield return w;
             }
         }
-        public EventGraphAnalyzer(EventGraph _eventGraph)
+        public EventGraphAnalyzer(EventGraph evGraph)
         {
-            orderedProjectWorks = new List<Work>();
-            orderedProjectPath = new List<ProjectEvent>();
             criticalWorks = new List<Work>();
             criticalPath = new List<ProjectEvent>();
             worksStages = new List<List<Work>>();
             callback = new List<(float t, float c)>();
-            eventGraph = _eventGraph;
+            
+            currentEventGraph = evGraph;
+            orderedProjectPath = new List<ProjectEvent>(currentEventGraph.EventsByTitle.Count);
+            orderedProjectWorks = new List<Work>(currentEventGraph.WorksByTitle.Count);
             
             Init();
             callback.Add((Cost, Duration));
         }
         private void CheckStartAndFin()
         {
-            if (eventGraph.PrimaryEvents.Count == 0)
+            if (currentEventGraph.PrimaryEvents.Count == 0)
                 throw new System.Exception("Нет начального события");
-            if (eventGraph.FinalEvents.Count == 0)
+            if (currentEventGraph.FinalEvents.Count == 0)
                 throw new System.Exception("Нет конечного события");
         }
         private void OutsideEventsUnioning()
         {
-            var primaryList = eventGraph.PrimaryEvents.ToList();
+            var primaryList = currentEventGraph.PrimaryEvents.ToList();
             primaryEvent = primaryList[0];
-            if (eventGraph.PrimaryEvents.Count > 1)
+            if (currentEventGraph.PrimaryEvents.Count > 1)
                 for (int i = 1; i < primaryList.Count; i++)
                 {
                     foreach (var fw in primaryList[i].FollowingWorks)
@@ -107,9 +108,9 @@ namespace QSBMODLibrary.Classes
                         primaryEvent.FollowingWorks.Add(fw);
                     }
                 }
-            var finalList = eventGraph.FinalEvents.ToList();
+            var finalList = currentEventGraph.FinalEvents.ToList();
             finalEvent = finalList[0];
-            if (eventGraph.FinalEvents.Count > 1)
+            if (currentEventGraph.FinalEvents.Count > 1)
                 for (int i = 1; i < finalList.Count; i++)
                 {
                     foreach (var fw in finalList[i].PreviousWorks)
@@ -124,8 +125,7 @@ namespace QSBMODLibrary.Classes
         {
             CheckStartAndFin();
             OutsideEventsUnioning();
-            orderedProjectPath = new List<ProjectEvent>(eventGraph.EventsByTitle.Count);
-            orderedProjectWorks = new List<Work>(eventGraph.WorksByTitle.Count);
+            
             uint id = 0u, cpid = 0u;
             var visitideEvents = new HashSet<ProjectEvent>();
             var events = new List<ProjectEvent>();
@@ -170,8 +170,9 @@ namespace QSBMODLibrary.Classes
             for (int i = 1; i < orderedProjectPath.Count; i++)
                 orderedProjectPath[i].ES = orderedProjectPath[i].PreviousWorks.Max(fw => fw.Duration + fw.FirstEvent.ES);
             finalEvent.LS = finalEvent.ES;
-            for (int i = orderedProjectPath.Count - 2; i >= 0; i--)
-                orderedProjectPath[i].LS = orderedProjectPath[i].FollowingWorks.Min(fw => fw.SecondEvent.LS - fw.Duration);
+            for (int i = 2; i < orderedProjectPath.Count; i++)
+                orderedProjectPath[^i].LS = orderedProjectPath[^i].FollowingWorks.Min(fw => fw.SecondEvent.LS - fw.Duration);
+
         }
         private void FindCriticalPath()
         {
@@ -210,13 +211,16 @@ namespace QSBMODLibrary.Classes
         {
             Work minimalTgaWork = new Work();
             criticalWorks.ForEach(
-                w => minimalTgaWork = (w.tgA < minimalTgaWork.tgA &&
-                Math.Round(w.ResourcesMax, 2) >= Math.Round(w.Resources + (w.DurationMax - w.Duration - 1) * w.tgA, 2) &&
-                Math.Round(w.DurationMin, 2) <= Math.Round(w.Duration - 1, 2)) ? w : minimalTgaWork);
+                w =>
+                minimalTgaWork = (
+                      w.tgA < minimalTgaWork.tgA &&
+                      w.DurationMin <= w.Duration - 1 &&
+                      Math.Round(w.ResourcesMax, 2) >= Math.Round(w.Resources + w.tgA, 2))
+                      ? w : minimalTgaWork);
             if (minimalTgaWork.IsCritical)
             {
                 minimalTgaWork.Duration -= 1;
-                minimalTgaWork.Resources += (minimalTgaWork.DurationMax - minimalTgaWork.Duration - 1) * minimalTgaWork.tgA;
+                minimalTgaWork.Resources += minimalTgaWork.tgA;
                 callback.Add((Cost, Duration));
             }
             else

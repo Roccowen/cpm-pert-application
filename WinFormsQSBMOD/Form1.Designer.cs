@@ -29,51 +29,43 @@ namespace WinFormsQSBMOD
         /// </summary>
         private void InitializeComponent()
         {
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.mainFormToolStrip = new System.Windows.Forms.ToolStrip();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.addWorkToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.delWorkToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.optimiseToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.fullOptimisationToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.toBackToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toBackToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.resultToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStrip1.SuspendLayout();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.mainFormToolStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // toolStrip1
+            // mainFormToolStrip
             // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveToolStripButton,
+            this.mainFormToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripButton,
-            this.toolStripSeparator1,
             this.addWorkToolStripButton,
+            this.toolStripSeparator1,
             this.delWorkToolStripButton,
+            this.saveToolStripButton,
             this.toolStripSeparator2,
             this.optimiseToolStripButton,
             this.fullOptimisationToolStripButton,
-            this.toBackToolStripButton,
             this.toolStripSeparator3,
-            this.resultToolStripButton});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(883, 25);
-            this.toolStrip1.TabIndex = 0;
-            this.toolStrip1.Text = "toolStrip1";
-            this.toolStrip1.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.toolStrip1_ItemClicked);
-            // 
-            // saveToolStripButton
-            // 
-            this.saveToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.saveToolStripButton.Enabled = false;
-            this.saveToolStripButton.Image = global::QSBMODWinForms.Properties.Resources._003_diskette;
-            this.saveToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.saveToolStripButton.Name = "saveToolStripButton";
-            this.saveToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.saveToolStripButton.Text = "Сохранить модель";
+            this.toBackToolStripButton,
+            this.resultToolStripButton,
+            this.toolStripLabel1});
+            this.mainFormToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.mainFormToolStrip.Name = "mainFormToolStrip";
+            this.mainFormToolStrip.Size = new System.Drawing.Size(883, 25);
+            this.mainFormToolStrip.TabIndex = 0;
+            this.mainFormToolStrip.Text = "toolStrip1";
+            this.mainFormToolStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.mainFormToolStrip_ItemClicked);
             // 
             // openToolStripButton
             // 
@@ -84,11 +76,6 @@ namespace WinFormsQSBMOD
             this.openToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.openToolStripButton.Text = "Открыть модель";
             // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
-            // 
             // addWorkToolStripButton
             // 
             this.addWorkToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -97,6 +84,11 @@ namespace WinFormsQSBMOD
             this.addWorkToolStripButton.Name = "addWorkToolStripButton";
             this.addWorkToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.addWorkToolStripButton.Text = "Добавить работу";
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // delWorkToolStripButton
             // 
@@ -107,6 +99,16 @@ namespace WinFormsQSBMOD
             this.delWorkToolStripButton.Name = "delWorkToolStripButton";
             this.delWorkToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.delWorkToolStripButton.Text = "Удалить работу";
+            // 
+            // saveToolStripButton
+            // 
+            this.saveToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.saveToolStripButton.Enabled = false;
+            this.saveToolStripButton.Image = global::QSBMODWinForms.Properties.Resources._003_diskette;
+            this.saveToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.saveToolStripButton.Name = "saveToolStripButton";
+            this.saveToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.saveToolStripButton.Text = "Сохранить модель";
             // 
             // toolStripSeparator2
             // 
@@ -133,6 +135,11 @@ namespace WinFormsQSBMOD
             this.fullOptimisationToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.fullOptimisationToolStripButton.Text = "Полная оптимизация";
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            // 
             // toBackToolStripButton
             // 
             this.toBackToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -142,11 +149,6 @@ namespace WinFormsQSBMOD
             this.toBackToolStripButton.Name = "toBackToolStripButton";
             this.toBackToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.toBackToolStripButton.Text = "Отменить последнее изменение";
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
             // resultToolStripButton
             // 
@@ -158,6 +160,14 @@ namespace WinFormsQSBMOD
             this.resultToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.resultToolStripButton.Text = "Отчет по оптимизации";
             // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.toolStripLabel1.ForeColor = System.Drawing.Color.Maroon;
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(86, 22);
+            this.toolStripLabel1.Text = "toolStripLabel1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -165,14 +175,13 @@ namespace WinFormsQSBMOD
             this.AutoScroll = true;
             this.AutoScrollMinSize = new System.Drawing.Size(400, 0);
             this.ClientSize = new System.Drawing.Size(883, 470);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.mainFormToolStrip);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "QSBMOD14";
-            this.Resize += new System.EventHandler(this.Form1_Resize);
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.mainFormToolStrip.ResumeLayout(false);
+            this.mainFormToolStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -194,6 +203,8 @@ namespace WinFormsQSBMOD
         private System.Windows.Forms.ToolStripButton fullOptimisationToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton resultToolStripButton;
+        private System.Windows.Forms.ToolStrip mainFormToolStrip;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
     }
 }
 
