@@ -9,11 +9,11 @@ namespace QSBMODLibrary.Classes
     {
         private ProjectEvent primaryEvent, finalEvent;
         
-        private readonly EventGraph currentEventGraph;                
+        public readonly EventGraph currentEventGraph;                
         private readonly List<Work> orderedProjectWorks, criticalWorks;
         private readonly List<ProjectEvent> orderedProjectPath, criticalPath;               
         private readonly List<List<Work>> worksStages;
-        private readonly List<(float t, float c)> callback;
+        public readonly List<(float t, float c)> callback;
         private bool isOptimized = false;
         public bool IsOptimized
         {
@@ -128,8 +128,10 @@ namespace QSBMODLibrary.Classes
             
             uint id = 0u, cpid = 0u;
             var visitideEvents = new HashSet<ProjectEvent>();
-            var events = new List<ProjectEvent>();
-            events.Add(primaryEvent);
+            var events = new List<ProjectEvent>
+            {
+                primaryEvent
+            };
             while (events.Count > 0)
             {
                 var tempEvents = new List<ProjectEvent>();
@@ -177,11 +179,11 @@ namespace QSBMODLibrary.Classes
         private void FindCriticalPath()
         {
             var tempEvent = primaryEvent;
-            Work tempWork = null;
+            
             while (tempEvent != null)
             {
                 criticalPath.Add(tempEvent);
-                tempWork = tempEvent.FollowingWorks.FirstOrDefault(fw => fw.SecondEvent.ES == fw.SecondEvent.LS);
+                var tempWork = tempEvent.FollowingWorks.FirstOrDefault(fw => fw.SecondEvent.ES == fw.SecondEvent.LS);
                 if (tempWork is null)
                     tempEvent = null;
                 else
@@ -204,7 +206,11 @@ namespace QSBMODLibrary.Classes
                 w.PR = w.SecondEvent.LS - w.FirstEvent.LS - w.Duration;
                 w.IR = w.SecondEvent.ES - w.FirstEvent.LS - w.Duration;
                 w.FreeR = w.SecondEvent.ES - w.FirstEvent.ES - w.Duration;
-                w.K = 1 - w.FR / (Cost - worksStages[(int)w.CPId].FirstOrDefault(w => w.IsCritical == true).Duration);
+                var wFromCP = worksStages[(int)w.CPId].FirstOrDefault(w => w.IsCritical == true);
+                if (wFromCP is null)
+                    w.K = 0;
+                else
+                    w.K = 1 - w.FR / (Cost - wFromCP.Duration);
             }
         }
         public void OptimizeForOneDay()

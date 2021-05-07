@@ -4,7 +4,43 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>Msdos-icon.ico</ApplicationIcon>
+    <Authors>Мирвода Артем</Authors>
+    <Company>УрГЭУ</Company>
+    <Product>QSBMOD14</Product>
+    <Copyright>MIT</Copyright>
+    <PackageProjectUrl>https://github.com/Roccowen/QSBMOD</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Roccowen/QSBMOD</RepositoryUrl>
+    <NeutralLanguage>ru</NeutralLanguage>
+    <SignAssembly>true</SignAssembly>
+    <Configurations>Debug;Release;Test</Configurations>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\MontserratFontsOFT\Montserrat-Bold.otf" />
+    <None Remove="Resources\MontserratFontsOFT\Montserrat-Regular.otf" />
+    <None Remove="Resources\MontserratFontsOFT\Montserrat-SemiBold.otf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MontserratFontsOFT\Montserrat-Bold.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MontserratFontsOFT\Montserrat-Regular.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MontserratFontsOFT\Montserrat-SemiBold.otf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ZedGraph" Version="5.1.7" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\QSBMODLibrary\QSBMODLibrary.csproj" />

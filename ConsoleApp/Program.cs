@@ -46,7 +46,7 @@ namespace ConsoleApp
             Console.WriteLine($"  КП стоимость : {analyzer.Cost}");
             Console.Write("  КП : ");
             foreach (var w in analyzer.CriticalWorks)
-                Console.Write($"{w.Title} ");
+                Console.Write($"{w.Title} ");            
             Console.Write(String.Format("\n\n  {0, -5} {1, -10} {2, -7} {3, -7} {4, -7} {5, -7} {6, -5} {7, -5} {8, -5} {9, -5} {10, -6} {11, -13} {12, -7}\n\n",
                                                 "№", "Название", "t", "c", "T_min", "C_max", "РН", "ПН", "РО", "ПО", "Резерв", "Напряженность", "tgA"));
             foreach (var w in analyzer.Works)

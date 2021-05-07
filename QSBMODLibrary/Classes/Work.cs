@@ -17,7 +17,8 @@ namespace QSBMODLibrary.Classes
         public uint Id = 0;
         public readonly float DurationMin, DurationMax, ResourcesMin, ResourcesMax;
         public readonly string Title;
-        public float Duration = 0, Resources = 0,
+        public float Duration {get; set;} 
+        public float Resources = 0,
             ES = 0, LS = 0, EE = 0, LE = 0, FR = 0, PR = 0, FreeR = 0, IR = 0, K = 0, tgA = 0;
         public string FirstEventTitle, SecondEventTitle;
         public ProjectEvent FirstEvent, SecondEvent;    
@@ -25,8 +26,15 @@ namespace QSBMODLibrary.Classes
                     float resourcesMin, float resourcesMax,
                     string startEventTitle, string secondEventTitle)
         {
+            
             if (title.Contains(';') || startEventTitle.Contains(';') || secondEventTitle.Contains(';'))
-                throw new InvalidOperationException("Title can't contain \";\"");
+                throw new InvalidOperationException("Названия не могут содержать \";\"");
+            if (durationMax < 0 || durationMin < 0 || resourcesMax < 0 || resourcesMin < 0)
+                throw new InvalidOperationException("Значения должны быть положительными");
+            if (durationMax < durationMin || resourcesMax < resourcesMin)
+                throw new InvalidOperationException("Tmax должно быть больше чем Tmin или Cmax чем Cmin");
+            if (startEventTitle == secondEventTitle)
+                throw new InvalidOperationException("Начальное событие и конечное, должны быть разными");
 
             Title = title;
             FirstEventTitle = startEventTitle;
@@ -44,7 +52,18 @@ namespace QSBMODLibrary.Classes
             string startEventTitle, string secondEventTitle)
         {
             if (title.Contains(';') || startEventTitle.Contains(';') || secondEventTitle.Contains(';'))
-                throw new InvalidOperationException("Title can't contain \";\"");
+                throw new InvalidOperationException("Названия не могут содержать \";\"");
+            if (durationMax < 0 || durationMin < 0 || duration < 0 || resourcesMax < 0 || resourcesMin < 0 || resources < 0)
+                throw new InvalidOperationException("Значения должны быть положительными");
+            if (durationMax < durationMin || resourcesMax < resourcesMin)
+                throw new InvalidOperationException("Tmax должно быть больше чем Tmin или Cmax чем Cmin");
+            if (startEventTitle == secondEventTitle)
+                throw new InvalidOperationException("Начальное событие и конечное, должны быть разными");
+            if (duration > durationMax || duration < durationMin)
+                throw new InvalidOperationException("t должно быть между Tmin и Tmax");
+            if (resources > resourcesMax || resources < resourcesMin)
+                throw new InvalidOperationException("c должно быть между Cmin и Cmax");
+            
             Title = title;
             FirstEventTitle = startEventTitle;
             SecondEventTitle = secondEventTitle;
