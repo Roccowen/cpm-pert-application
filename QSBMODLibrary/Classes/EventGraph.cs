@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace QSBMODLibrary.Classes
 {
@@ -14,10 +15,11 @@ namespace QSBMODLibrary.Classes
             WorksByTitle = new Dictionary<string, Work>();
             EventsByTitle = new Dictionary<string, ProjectEvent>();
         }
-        public void AddWork(Work work)
+        public Work AddWork(Work work)
         {
             ProjectEvent eventTemp;
             WorksByTitle.Add(work.Title, work);
+
             if (!EventsByTitle.TryGetValue(work.FirstEventTitle, out eventTemp))
             {
                 eventTemp = new ProjectEvent(work.FirstEventTitle);
@@ -36,6 +38,7 @@ namespace QSBMODLibrary.Classes
             work.SecondEvent = eventTemp;            
             eventTemp.PreviousWorks.Add(work);
             PrimaryEvents.Remove(eventTemp);
+            return work;
         }
     }
 }

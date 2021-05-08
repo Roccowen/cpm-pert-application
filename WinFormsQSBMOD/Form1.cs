@@ -54,7 +54,7 @@ namespace QSBMODWinForms
                 {
                     try
                     {
-                        eventGraph.AddWork(new Work(row[0].Text,
+                        var w = new Work(row[0].Text,
                                         float.Parse(row[1].Text),
                                         float.Parse(row[2].Text),
                                         float.Parse(row[3].Text),
@@ -62,13 +62,17 @@ namespace QSBMODWinForms
                                         float.Parse(row[5].Text),
                                         float.Parse(row[6].Text),
                                         row[7].Text,
-                                        row[8].Text));
+                                        row[8].Text);
+                        eventGraph.AddWork(w);
                     }
-                    catch (FormatException ex)
+                    catch (FormatException)
                     {
-                        ex = new FormatException("Строка имела неверный формат");
-                        throw ex;
-                    }            
+                        throw new FormatException("Строка имела неверный формат");
+                    }
+                    catch (ArgumentException)
+                    {
+                        throw new ArgumentException("Номера работ должны иметь уникальные названия");
+                    }
                 }
                 return eventGraph;
             }
@@ -206,6 +210,7 @@ namespace QSBMODWinForms
                     Name = $"textBox{textBoxesRows.Count + i}",
                     Location = new Point(cursor, y + (textBoxesRows.Count + 1) * (textBoxHeight + marginWid)),
                 };
+                tbRow[i] = tb;
                 tb.TextChanged += ModelStateChanged;
                 List<int> bindable;
                 if (bindingDictionary.TryGetValue(i, out bindable))
@@ -218,6 +223,17 @@ namespace QSBMODWinForms
                             tbRow[tbid].TextChanged -= ModelStateChanged;
                         };
                     }
+                }
+                if (i == 8)
+                {
+                    tbRow[8].TextChanged += delegate (object sender, EventArgs e)
+                    {
+                        tbRow[0].Text = String.Format($"{tbRow[7].Text} - {tbRow[8].Text}");
+                    };
+                    tbRow[7].TextChanged += delegate (object sender, EventArgs e)
+                    {
+                        tbRow[0].Text = String.Format($"{tbRow[7].Text} - {tbRow[8].Text}");
+                    };
                 }
                 if (isStringTb[i])
                 {
@@ -237,7 +253,7 @@ namespace QSBMODWinForms
                 {
                     tb.Text = Convert.ToString(RowsCount + 1);
                 }
-                tbRow[i] = tb;
+                
                 Controls.Add(tb);
             }
             foreach (var tb in tbRow)
@@ -327,11 +343,11 @@ namespace QSBMODWinForms
 
 
         private void AddWorkToolStripButton_Click(object sender, EventArgs e)
-        {
+        {           
             try
             {
                 Loger.Msg("private void AddWorkToolStripButton_Click(object sender, EventArgs e)");
-                AddWork();                
+                AddWork();
             }
             catch (Exception ex)
             {

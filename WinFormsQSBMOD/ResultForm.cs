@@ -53,10 +53,10 @@ namespace QSBMODWinForms
             result.Add("\r\n  КП : ");
             foreach (var w in ParentForm.EventGraphAnalyzer.CriticalWorks)
                 result.Add($"{w.Title} ");
-            result.Add(String.Format("\r\n\r\n  {0, -4} {1, -6} {2, -6} {3, -6} {4, -6} {5, -6} {6, -6} {7, -6} {8, -6} {9, -8} {10, -8} {11, -6}\r\n\r\n"
+            result.Add(String.Format("\r\n\r\n  {0, -6} {1, -6} {2, -6} {3, -6} {4, -6} {5, -6} {6, -6} {7, -6} {8, -6} {9, -8} {10, -8} {11, -6}\r\n\r\n"
                                                 , "№", "t", "c", "Tmin", "Cmax", "РН", "ПН", "РО", "ПО", "Резерв", "Напряж.", "tgA"));
             foreach (var w in ParentForm.EventGraphAnalyzer.Works)
-                result.Add(String.Format("  {0, -4} {1, -6} {2, -6} {3, -6} {4, -6} {5, -6} {6, -6} {7, -6} {8, -6} {9, -8} {10, -8} {11, -6}\r\n",
+                result.Add(String.Format("  {0, -6} {1, -6} {2, -6} {3, -6} {4, -6} {5, -6} {6, -6} {7, -6} {8, -6} {9, -8} {10, -8} {11, -6}\r\n",
                                                w.Title, Math.Round(w.Duration, 2), Math.Round(w.Resources, 2), Math.Round(w.DurationMin, 2), 
                                                Math.Round(w.ResourcesMax, 2), w.ES, w.LS, w.EE, w.LE, isKrit(w.FR, 0), isKrit((float)Math.Round(w.K, 2), 1), 
                                                Math.Round(w.tgA, 2)));

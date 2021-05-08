@@ -40,7 +40,7 @@ namespace QSBMODWinForms
             // 
             // dependencyPlot
             // 
-            this.dependencyPlot.Location = new System.Drawing.Point(13, 12);
+            this.dependencyPlot.Location = new System.Drawing.Point(19, 12);
             this.dependencyPlot.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.dependencyPlot.Name = "dependencyPlot";
             this.dependencyPlot.ScrollGrace = 0D;
@@ -50,13 +50,13 @@ namespace QSBMODWinForms
             this.dependencyPlot.ScrollMinX = 0D;
             this.dependencyPlot.ScrollMinY = 0D;
             this.dependencyPlot.ScrollMinY2 = 0D;
-            this.dependencyPlot.Size = new System.Drawing.Size(322, 310);
+            this.dependencyPlot.Size = new System.Drawing.Size(317, 317);
             this.dependencyPlot.TabIndex = 0;
             this.dependencyPlot.UseExtendedPrintDialog = true;
             // 
             // propabilityPlot
             // 
-            this.propabilityPlot.Location = new System.Drawing.Point(368, 12);
+            this.propabilityPlot.Location = new System.Drawing.Point(394, 12);
             this.propabilityPlot.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.propabilityPlot.Name = "propabilityPlot";
             this.propabilityPlot.ScrollGrace = 0D;
@@ -66,7 +66,7 @@ namespace QSBMODWinForms
             this.propabilityPlot.ScrollMinX = 0D;
             this.propabilityPlot.ScrollMinY = 0D;
             this.propabilityPlot.ScrollMinY2 = 0D;
-            this.propabilityPlot.Size = new System.Drawing.Size(322, 310);
+            this.propabilityPlot.Size = new System.Drawing.Size(317, 317);
             this.propabilityPlot.TabIndex = 1;
             this.propabilityPlot.UseExtendedPrintDialog = true;
             // 
@@ -76,7 +76,7 @@ namespace QSBMODWinForms
             this.resoltTextBox.Multiline = true;
             this.resoltTextBox.Name = "resoltTextBox";
             this.resoltTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.resoltTextBox.Size = new System.Drawing.Size(665, 311);
+            this.resoltTextBox.Size = new System.Drawing.Size(692, 311);
             this.resoltTextBox.TabIndex = 2;
             // 
             // groupBox1
@@ -84,7 +84,7 @@ namespace QSBMODWinForms
             this.groupBox1.Controls.Add(this.resoltTextBox);
             this.groupBox1.Location = new System.Drawing.Point(13, 335);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(677, 339);
+            this.groupBox1.Size = new System.Drawing.Size(704, 339);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Отчет";
@@ -93,7 +93,7 @@ namespace QSBMODWinForms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(708, 686);
+            this.ClientSize = new System.Drawing.Size(729, 686);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.propabilityPlot);
             this.Controls.Add(this.dependencyPlot);
