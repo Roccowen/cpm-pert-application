@@ -138,7 +138,8 @@ namespace QSBMODWinFormsNF
             Loger.Msg("public Form1()");
             InitializeComponent();
             errorStripLabel.Font = new Font(FontCollection.Families[0], 9f);
-            this.MinimumSize = new Size(GetWidth(), 500);
+            this.MinimumSize = new Size(GetWidth() + 40 , 500);
+            this.rows.Width = GetWidth();
             DrawTableHead();
 
             openToolStripButton.Click += ModelStateChanged;
@@ -148,10 +149,14 @@ namespace QSBMODWinFormsNF
             fullOptimisationToolStripButton.Click += ModelStateSaved;
             OnRowsCountChanged += RowsCountChanged;
         }
+        protected override System.Drawing.Point ScrollToControl(Control activeControl)
+        {
+            return DisplayRectangle.Location;
+        }
         private int GetWidth()
         {
             Loger.Msg("private int GetWidth()");
-            int width = 2 * x + 25;
+            int width = x + 10;
             foreach (var tb in isStringTb)
                 if (tb)
                     width += stringTextBoxWidth + marginWid;
@@ -162,7 +167,7 @@ namespace QSBMODWinFormsNF
         private void DrawTableHead()
         {
             Loger.Msg("private void DrawTableHead()");
-            int cursor = x;
+            int cursor = x + 12;
             for (int i = 0; i < titles.Length; i++)
             {
                 Label lbl = new Label
@@ -246,10 +251,10 @@ namespace QSBMODWinFormsNF
                     tb.Text = Convert.ToString(RowsCount + 1);
                 }
 
-                Controls.Add(tb);
+                rows.Controls.Add(tb);
             }
-            foreach (var tb in tbRow)
-                Controls.Add(tb);
+            //foreach (var tb in tbRow)
+            //    Controls.Add(tb);
             textBoxesRows.Push(tbRow);
             RowsCount++;
 
@@ -260,7 +265,7 @@ namespace QSBMODWinFormsNF
             Loger.Msg("private TextBox[] DelLastWork()");
             var delRow = textBoxesRows.Pop();
             foreach (var tb in delRow)
-                Controls.Remove(tb);
+                rows.Controls.Remove(tb);
             RowsCount--;
             IsModelChanged = true;
             errorStripLabel.Text = "";
@@ -284,7 +289,9 @@ namespace QSBMODWinFormsNF
             foreach (var row in textBoxesRows)
             {
                 row[1].Text = row[3].Text;
+                row[1].BackColor = TextBox.DefaultBackColor;
                 row[4].Text = row[5].Text;
+                row[4].BackColor = TextBox.DefaultBackColor;
             };
         }
         private void UpdateCoefs()
@@ -294,8 +301,16 @@ namespace QSBMODWinFormsNF
             int i = 0;
             foreach (var w in EventGraphAnalyzer.Works)
             {
-                tbr[i][1].Text = Convert.ToString(Math.Round(w.Duration, 2));
-                tbr[i][4].Text = Convert.ToString(Math.Round(w.Resources, 2));
+                if (tbr[i][1].Text != Convert.ToString(Math.Round(w.Duration, 2)))
+                {
+                    tbr[i][1].BackColor = Color.FromArgb(255, 191, 255, 196);
+                    tbr[i][1].Text = Convert.ToString(Math.Round(w.Duration, 2));
+                }
+                if (tbr[i][4].Text != Convert.ToString(Math.Round(w.Resources, 2)))
+                {
+                    tbr[i][4].BackColor = Color.FromArgb(255, 255, 191, 191);
+                    tbr[i][4].Text = Convert.ToString(Math.Round(w.Resources, 2));
+                }
                 i++;
             };
         }

@@ -42,6 +42,7 @@ namespace QSBMODWinFormsNF
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.resultToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.errorStripLabel = new System.Windows.Forms.ToolStripLabel();
+            this.rows = new System.Windows.Forms.FlowLayoutPanel();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -93,6 +94,7 @@ namespace QSBMODWinFormsNF
             // delWorkToolStripButton
             // 
             this.delWorkToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.delWorkToolStripButton.Enabled = false;
             this.delWorkToolStripButton.Image = global::QSBMODWinFormsNF.Properties.Resources._007_delete;
             this.delWorkToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.delWorkToolStripButton.Name = "delWorkToolStripButton";
@@ -103,6 +105,7 @@ namespace QSBMODWinFormsNF
             // saveToolStripButton
             // 
             this.saveToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.saveToolStripButton.Enabled = false;
             this.saveToolStripButton.Image = global::QSBMODWinFormsNF.Properties.Resources._003_diskette;
             this.saveToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveToolStripButton.Name = "saveToolStripButton";
@@ -118,6 +121,7 @@ namespace QSBMODWinFormsNF
             // optimiseToolStripButton
             // 
             this.optimiseToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.optimiseToolStripButton.Enabled = false;
             this.optimiseToolStripButton.Image = global::QSBMODWinFormsNF.Properties.Resources._005_bar_chart;
             this.optimiseToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.optimiseToolStripButton.Name = "optimiseToolStripButton";
@@ -128,6 +132,7 @@ namespace QSBMODWinFormsNF
             // fullOptimisationToolStripButton
             // 
             this.fullOptimisationToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.fullOptimisationToolStripButton.Enabled = false;
             this.fullOptimisationToolStripButton.Image = global::QSBMODWinFormsNF.Properties.Resources._008_bar_chart_red;
             this.fullOptimisationToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.fullOptimisationToolStripButton.Name = "fullOptimisationToolStripButton";
@@ -143,6 +148,7 @@ namespace QSBMODWinFormsNF
             // resultToolStripButton
             // 
             this.resultToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.resultToolStripButton.Enabled = false;
             this.resultToolStripButton.Image = global::QSBMODWinFormsNF.Properties.Resources._009_research;
             this.resultToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.resultToolStripButton.Name = "resultToolStripButton";
@@ -158,15 +164,24 @@ namespace QSBMODWinFormsNF
             this.errorStripLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.errorStripLabel.Size = new System.Drawing.Size(0, 22);
             // 
+            // rows
+            // 
+            this.rows.AutoScroll = true;
+            this.rows.Location = new System.Drawing.Point(12, 56);
+            this.rows.Name = "rows";
+            this.rows.Size = new System.Drawing.Size(776, 382);
+            this.rows.TabIndex = 1;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.rows);
             this.Controls.Add(this.toolStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "Form1";
             this.Text = "QSBMOD14";
             this.toolStrip1.ResumeLayout(false);
@@ -190,6 +205,7 @@ namespace QSBMODWinFormsNF
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton resultToolStripButton;
         private System.Windows.Forms.ToolStripLabel errorStripLabel;
+        private System.Windows.Forms.FlowLayoutPanel rows;
     }
 }
 
