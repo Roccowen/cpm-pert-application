@@ -14,6 +14,7 @@
     <NeutralLanguage>ru</NeutralLanguage>
     <SignAssembly>true</SignAssembly>
     <Configurations>Debug;Release;Test</Configurations>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

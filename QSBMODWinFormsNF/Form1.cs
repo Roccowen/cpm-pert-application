@@ -4,11 +4,11 @@ using System.Drawing;
 using System.Linq;
 using System.IO;
 using System.Windows.Forms;
-using QSBMODLibrary.Classes;
-using QSBMODWinForms.Classes;
+using QSBMODLibraryNF.Classes;
+using QSBMODWinFormsNF.Classes;
 using System.Drawing.Text;
 
-namespace QSBMODWinForms
+namespace QSBMODWinFormsNF
 {
     public partial class Form1 : Form
     {
@@ -29,7 +29,7 @@ namespace QSBMODWinForms
 
         private readonly Stack<TextBox[]> textBoxesRows = new Stack<TextBox[]>();
 
-        private bool IsModelChanged = true;      
+        private bool IsModelChanged = true;
         private EventGraphAnalyzer eventGraphAnalyzerValue;
         public EventGraphAnalyzer EventGraphAnalyzer
         {
@@ -82,9 +82,9 @@ namespace QSBMODWinForms
                 foreach (var w in value.WorksByTitle.Values)
                 {
                     var row = AddWork();
-                    row[0].Text = w.Title;                    
+                    row[0].Text = w.Title;
                     row[2].Text = Convert.ToString(Math.Round(w.DurationMin, 2));
-                    row[3].Text = Convert.ToString(Math.Round(w.DurationMax, 2));                    
+                    row[3].Text = Convert.ToString(Math.Round(w.DurationMax, 2));
                     row[5].Text = Convert.ToString(Math.Round(w.ResourcesMin, 2));
                     row[6].Text = Convert.ToString(Math.Round(w.ResourcesMax, 2));
                     row[7].Text = w.FirstEventTitle;
@@ -93,7 +93,7 @@ namespace QSBMODWinForms
                 var tbr = textBoxesRows.Reverse().ToArray();
                 int i = 0;
                 foreach (var w in value.WorksByTitle.Values)
-                {                    
+                {
                     tbr[i][1].Text = Convert.ToString(Math.Round(w.Duration, 2));
                     tbr[i][4].Text = Convert.ToString(Math.Round(w.Resources, 2));
                     i++;
@@ -114,7 +114,7 @@ namespace QSBMODWinForms
                     rowsCount = value;
                     OnRowsCountChanged(this, EventArgs.Empty);
                 }
-                    
+
             }
         }
         private PrivateFontCollection fontCollectionValue;
@@ -132,29 +132,20 @@ namespace QSBMODWinForms
                 return fontCollectionValue;
             }
         }
-        public event EventHandler OnRowsCountChanged;     
+        public event EventHandler OnRowsCountChanged;
         public Form1()
         {
             Loger.Msg("public Form1()");
             InitializeComponent();
-            
+            errorStripLabel.Font = new Font(FontCollection.Families[0], 9f);
             this.MinimumSize = new Size(GetWidth(), 500);
             DrawTableHead();
-            errorStripLabel.Font = new Font(FontCollection.Families[0], 9f);
 
-            saveToolStripButton.Click += SaveToolStripButton_Click;
             openToolStripButton.Click += ModelStateChanged;
-            openToolStripButton.Click += OpenToolStripButton_Click;
             addWorkToolStripButton.Click += ModelStateChanged;
-            addWorkToolStripButton.Click += AddWorkToolStripButton_Click;
             delWorkToolStripButton.Click += ModelStateChanged;
-            delWorkToolStripButton.Click += DelWorkToolStripButton_Click;
             optimiseToolStripButton.Click += ModelStateSaved;
-            optimiseToolStripButton.Click += OptimiseToolStripButton_Click;
-            toBackToolStripButton.Click += ToBackToolStripButton_Click;
             fullOptimisationToolStripButton.Click += ModelStateSaved;
-            fullOptimisationToolStripButton.Click += FullOptimisationToolStripButton_Click;
-            resultToolStripButton.Click += ResultToolStripButton_Click;
             OnRowsCountChanged += RowsCountChanged;
         }
         private int GetWidth()
@@ -254,7 +245,7 @@ namespace QSBMODWinForms
                 {
                     tb.Text = Convert.ToString(RowsCount + 1);
                 }
-                
+
                 Controls.Add(tb);
             }
             foreach (var tb in tbRow)
@@ -263,7 +254,7 @@ namespace QSBMODWinForms
             RowsCount++;
 
             return tbRow;
-        }       
+        }
         private TextBox[] DelLastWork()
         {
             Loger.Msg("private TextBox[] DelLastWork()");
@@ -341,10 +332,8 @@ namespace QSBMODWinForms
                 resultToolStripButton.Enabled = false;
             }
         }
-
-
         private void AddWorkToolStripButton_Click(object sender, EventArgs e)
-        {           
+        {
             try
             {
                 Loger.Msg("private void AddWorkToolStripButton_Click(object sender, EventArgs e)");
@@ -354,14 +343,8 @@ namespace QSBMODWinForms
             {
                 Loger.Msg(ex);
                 errorStripLabel.Text = ex.Message;
-            }                    
+            }
         }
-
-        private void mainFormToolStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
         private void DelWorkToolStripButton_Click(object sender, EventArgs e)
         {
             try
@@ -376,10 +359,6 @@ namespace QSBMODWinForms
                 errorStripLabel.Text = ex.Message;
             }
         }
-        private void ToBackToolStripButton_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
         private void OptimiseToolStripButton_Click(object sender, EventArgs e)
         {
             try
@@ -392,22 +371,23 @@ namespace QSBMODWinForms
             {
                 Loger.Msg(ex);
                 errorStripLabel.Text = ex.Message;
-            }           
+            }
         }
         private void OpenToolStripButton_Click(object sender, EventArgs e)
         {
             try
             {
                 Loger.Msg("private void OpenToolStripButton_Click(object sender, EventArgs e)");
-                using OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
-                openFileDialog.Filter = "csv files (*.csv)|*.csv";
-                openFileDialog.RestoreDirectory = true;
-
-                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
                 {
-                    string filePath = openFileDialog.FileName;
-                    EventGraph = EventGraphReader.ReadFromCSV(filePath);
+                    openFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
+                    openFileDialog.Filter = "csv files (*.csv)|*.csv";
+                    openFileDialog.RestoreDirectory = true;
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string filePath = openFileDialog.FileName;
+                        EventGraph = EventGraphReader.ReadFromCSV(filePath);
+                    }
                 }
             }
             catch (Exception ex)
@@ -465,7 +445,7 @@ namespace QSBMODWinForms
             {
                 Loger.Msg(ex);
                 errorStripLabel.Text = ex.Message;
-            }            
+            }
         }
     }
 }
