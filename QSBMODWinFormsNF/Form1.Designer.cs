@@ -42,7 +42,7 @@ namespace QSBMODWinFormsNF
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.resultToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.errorStripLabel = new System.Windows.Forms.ToolStripLabel();
-            this.rows = new System.Windows.Forms.FlowLayoutPanel();
+            this.tableRowsFlowPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -164,20 +164,20 @@ namespace QSBMODWinFormsNF
             this.errorStripLabel.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.errorStripLabel.Size = new System.Drawing.Size(0, 22);
             // 
-            // rows
+            // tableRowsFlowPanel
             // 
-            this.rows.AutoScroll = true;
-            this.rows.Location = new System.Drawing.Point(12, 56);
-            this.rows.Name = "rows";
-            this.rows.Size = new System.Drawing.Size(776, 382);
-            this.rows.TabIndex = 1;
+            this.tableRowsFlowPanel.AutoScroll = true;
+            this.tableRowsFlowPanel.Location = new System.Drawing.Point(12, 56);
+            this.tableRowsFlowPanel.Name = "tableRowsFlowPanel";
+            this.tableRowsFlowPanel.Size = new System.Drawing.Size(776, 382);
+            this.tableRowsFlowPanel.TabIndex = 1;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.rows);
+            this.Controls.Add(this.tableRowsFlowPanel);
             this.Controls.Add(this.toolStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -205,7 +205,7 @@ namespace QSBMODWinFormsNF
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton resultToolStripButton;
         private System.Windows.Forms.ToolStripLabel errorStripLabel;
-        private System.Windows.Forms.FlowLayoutPanel rows;
+        private System.Windows.Forms.FlowLayoutPanel tableRowsFlowPanel;
     }
 }
 

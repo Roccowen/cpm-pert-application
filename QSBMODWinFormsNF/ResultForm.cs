@@ -48,21 +48,37 @@ namespace QSBMODWinFormsNF
         }
         private string GetTextResult()
         {
-            string isKrit(float x, float y) => x == y ? "Крит." : x.ToString();
             List<string> result = new List<string>();
             result.Add($"  КП продолжительность : {ParentForm.EventGraphAnalyzer.Duration}");
             result.Add($"\r\n  КП стоимость : {ParentForm.EventGraphAnalyzer.Cost}");
             result.Add("\r\n  КП : ");
             foreach (var w in ParentForm.EventGraphAnalyzer.CriticalWorks)
                 result.Add($"{w.Title} ");
-            result.Add(String.Format("\r\n\r\n  {0, -6} {1, -6} {2, -6} {3, -6} {4, -6} {5, -6} {6, -6} {7, -6} {8, -6} {9, -8} {10, -8} {11, -6}\r\n\r\n"
-                                                , "№", "t", "c", "Tmin", "Cmax", "РН", "ПН", "РО", "ПО", "Резерв", "Напряж.", "tgA"));
+            result.Add("\r\n\r\n  Работы:");
+            result.Add(String.Format($"\r\n  {"Код", -8} {"t", -6} {"Tmin", -6} {"c", -6} {"Cmax", -6} {"РН", -6} {"ПН", -6} " +
+                    $"{"РО", -6} {"ПО", -6} {"ПР", -6} {"ЧР", -6} {"СР", -6} {"НР", -8} {"Напряж.", -8} {"tgA", -6} {"МО", -6} " +
+                    $"{ "Дисп.", -6}\r\n\r\n"));
             foreach (var w in ParentForm.EventGraphAnalyzer.Works)
-                result.Add(String.Format("  {0, -6} {1, -6} {2, -6} {3, -6} {4, -6} {5, -6} {6, -6} {7, -6} {8, -6} {9, -8} {10, -8} {11, -6}\r\n",
-                                               w.Title, Math.Round(w.Duration, 2), Math.Round(w.Resources, 2), Math.Round(w.DurationMin, 2),
-                                               Math.Round(w.ResourcesMax, 2), w.ES, w.LS, w.EE, w.LE, isKrit(w.FR, 0), isKrit((float)Math.Round(w.K, 2), 1),
-                                               Math.Round(w.tgA, 2)));
-            result.Add($"\r\n\r\n   Количество памяти текущего процесса : {Process.GetCurrentProcess().PrivateMemorySize64 / 1024} kB");
+                result.Add($"  {w.Title, -8} {Math.Round(w.Duration, 2), -6} {Math.Round(w.DurationMin, 2), -6} " +
+                        $"{Math.Round(w.Resources, 2), -6} {Math.Round(w.ResourcesMax, 2), -6} {Math.Round(w.ES, 2), -6} " +
+                        $"{Math.Round(w.LS, 2), -6} {Math.Round(w.EE, 2), -6} {Math.Round(w.LE, 2), -6} {Math.Round(w.FR, 2), -6} " +
+                        $"{Math.Round(w.PR, 2), -6} {Math.Round(w.FreeR, 2), -6} {Math.Round(w.IR, 2), -8} {Math.Round(w.K, 2), -8} " +
+                        $"{Math.Round(w.tgA, 2), -6} {Math.Round(w.exp, 2), -6} {Math.Round(w.dis, 2), -6}\r\n");
+            result.Add("\r\n\r\n  События:");
+            result.Add(String.Format("\r\n  {0, -8} {1, -8} {2, -8} {3, -8}\r\n\r\n", "Номер", "Код", "РН", "ПН"));
+            foreach (var ev in ParentForm.EventGraphAnalyzer.ProjectEvents.OrderBy(e => e.Id))
+                result.Add(String.Format("  {0, -8} {1, -8} {2, -8} {3, -8}\r\n", ev.Id, ev.Title, Math.Round(ev.ES, 2), Math.Round(ev.LS, 2)));
+
+            result.Add($"\r\n\r\n  РН - Раннее начало.");
+            result.Add($"\r\n  ПН - Позднее начало.");
+            result.Add($"\r\n  РО - Раннее окончание.");
+            result.Add($"\r\n  ПО - Позднее окончание.");
+            result.Add($"\r\n  ПР - Полный резерв");
+            result.Add($"\r\n  ЧР - Частный резерв первого порядка.");
+            result.Add($"\r\n  СР - Свободный резерв.");
+            result.Add($"\r\n  НР - Независимый резерв.");
+            result.Add($"\r\n  МО - Математическое ожидание.");
+            result.Add($"\r\n\r\n  Количество памяти текущего процесса : {Process.GetCurrentProcess().PrivateMemorySize64 / 1024} kB");
             return string.Join("", result);
         }
         private void DrawDependencyPlot(List<(float t, float c)> callback)

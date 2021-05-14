@@ -64,18 +64,38 @@ namespace ConsoleApp
         }
         static void Main(string[] args)
         {
-            var test1 = new List<Work> {
-                new Work("1-2", 3,  5,    23,    26.2f, "1", "2"),
-                new Work("1-3", 1,  2,    9.8f,  12,    "1", "3"),
-                new Work("1-4", 6.5f,  8, 22.5f, 27,    "1", "4"),
-                new Work("2-5", 3.5f,  5, 21.3f, 24,    "2", "5"),
-                new Work("3-4", 6,  9,    39.7f, 42.3f, "3", "4"),
-                new Work("3-5", 4,  7,    9.8f,  13.6f, "3", "5"),
-                new Work("4-5", 7.5f, 11, 46.8f, 51.7f, "4", "5"),
-                new Work("4-6", 5,  6,    17.2f, 19,    "4", "6"),
-                new Work("5-6", 5,  7,    34.6f, 41.1f, "5", "6")};
-            Test(test1);
-            
+            //var test1 = new List<Work> {
+            //    new Work("1-2", 3,  5,    23,    26.2f, "1", "2"),
+            //    new Work("1-3", 1,  2,    9.8f,  12,    "1", "3"),
+            //    new Work("1-4", 6.5f,  8, 22.5f, 27,    "1", "4"),
+            //    new Work("2-5", 3.5f,  5, 21.3f, 24,    "2", "5"),
+            //    new Work("3-4", 6,  9,    39.7f, 42.3f, "3", "4"),
+            //    new Work("3-5", 4,  7,    9.8f,  13.6f, "3", "5"),
+            //    new Work("4-5", 7.5f, 11, 46.8f, 51.7f, "4", "5"),
+            //    new Work("4-6", 5,  6,    17.2f, 19,    "4", "6"),
+            //    new Work("5-6", 5,  7,    34.6f, 41.1f, "5", "6")};
+            //Test(test1);
+            for (int i = 0; i < 9; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        Console.WriteLine(i);
+                        break;
+                    case 1:
+                        Console.WriteLine(i);
+                        break;
+                    case 2:
+                        Console.WriteLine(i);
+                        break;
+                    case 5:
+                        Console.WriteLine(i);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             //double[,] testSimp1 = {
             //                    {25, -3,  5},
             //                    {30, -2,  5},

@@ -9,19 +9,12 @@ namespace QSBMODLibraryNF.Classes
     {
         private ProjectEvent primaryEvent, finalEvent;
         
-        public readonly EventGraph currentEventGraph;                
+        private readonly EventGraph currentEventGraph;                
         private readonly List<Work> orderedProjectWorks, criticalWorks;
         private readonly List<ProjectEvent> orderedProjectPath, criticalPath;               
         private readonly List<List<Work>> worksStages;
         public readonly List<(float t, float c)> callback;
         private bool isOptimized = false;
-        public bool IsOptimized
-        {
-            get
-            {
-                return isOptimized;
-            }
-        }
         public int WorksCount
         {
             get
@@ -57,6 +50,14 @@ namespace QSBMODLibraryNF.Classes
                 }
             }
         }
+        public IEnumerable<ProjectEvent> ProjectEvents
+        {
+            get
+            {
+                foreach (var e in currentEventGraph.EventsByTitle.Values)
+                    yield return e;
+            }
+        }
         public IEnumerable<Work> Works
         {
             get
@@ -90,42 +91,19 @@ namespace QSBMODLibraryNF.Classes
         private void CheckStartAndFin()
         {
             if (currentEventGraph.PrimaryEvents.Count == 0)
-                throw new System.Exception("Нет начального события");
+                throw new Exception("Нет начального события");
             if (currentEventGraph.FinalEvents.Count == 0)
-                throw new System.Exception("Нет конечного события");
-        }
-        private void OutsideEventsUnioning()
-        {
-            var primaryList = currentEventGraph.PrimaryEvents.ToList();
-            primaryEvent = primaryList[0];
+                throw new Exception("Нет конечного события");
             if (currentEventGraph.PrimaryEvents.Count > 1)
-                for (int i = 1; i < primaryList.Count; i++)
-                {
-                    foreach (var fw in primaryList[i].FollowingWorks)
-                    {
-                        fw.FirstEventTitle = primaryEvent.Title;
-                        fw.FirstEvent = primaryEvent;
-                        primaryEvent.FollowingWorks.Add(fw);
-                    }
-                }
-            var finalList = currentEventGraph.FinalEvents.ToList();
-            finalEvent = finalList[0];
+                throw new Exception("Начальное событие должно быть только одно");
             if (currentEventGraph.FinalEvents.Count > 1)
-                for (int i = 1; i < finalList.Count; i++)
-                {
-                    foreach (var fw in finalList[i].PreviousWorks)
-                    {
-                        fw.SecondEventTitle = finalEvent.Title;
-                        fw.SecondEvent = finalEvent;
-                        finalEvent.PreviousWorks.Add(fw);
-                    }
-                }
+                throw new Exception("Конечное событие должно быть только одно");
+            primaryEvent = currentEventGraph.PrimaryEvents.First();
+            finalEvent = currentEventGraph.FinalEvents.First();
         }
         private void Init()
         {
-            CheckStartAndFin();
-            OutsideEventsUnioning();
-            
+            CheckStartAndFin();          
             uint id = 0u, cpid = 0u;
             var visitideEvents = new HashSet<ProjectEvent>();
             var events = new List<ProjectEvent>
@@ -183,7 +161,8 @@ namespace QSBMODLibraryNF.Classes
             while (tempEvent != null)
             {
                 criticalPath.Add(tempEvent);
-                var tempWork = tempEvent.FollowingWorks.FirstOrDefault(fw => fw.SecondEvent.ES == fw.SecondEvent.LS);
+                var tempWork = tempEvent.FollowingWorks.FirstOrDefault(
+                    fw => Math.Round(fw.SecondEvent.ES, 2) == Math.Round(fw.SecondEvent.LS, 2));
                 if (tempWork is null)
                     tempEvent = null;
                 else
@@ -215,7 +194,10 @@ namespace QSBMODLibraryNF.Classes
         }
         public void OptimizeForOneDay()
         {
-            Work minimalTgaWork = new Work();
+            Work minimalTgaWork = new Work
+            {
+                tgA = float.MaxValue
+            };             
             criticalWorks.ForEach(
                 w =>
                 minimalTgaWork = (
@@ -234,7 +216,7 @@ namespace QSBMODLibraryNF.Classes
         }
         public void FullOptimize()
         {
-            while (!IsOptimized)
+            while (!isOptimized)
                 OptimizeForOneDay();
         }
     }

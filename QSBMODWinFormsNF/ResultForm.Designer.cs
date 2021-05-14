@@ -40,6 +40,7 @@ namespace QSBMODWinFormsNF
             // 
             // dependencyPlot
             // 
+            this.dependencyPlot.AutoSize = true;
             this.dependencyPlot.Location = new System.Drawing.Point(19, 12);
             this.dependencyPlot.Name = "dependencyPlot";
             this.dependencyPlot.ScrollGrace = 0D;
@@ -55,6 +56,7 @@ namespace QSBMODWinFormsNF
             // 
             // propabilityPlot
             // 
+            this.propabilityPlot.AutoSize = true;
             this.propabilityPlot.Location = new System.Drawing.Point(394, 12);
             this.propabilityPlot.Name = "propabilityPlot";
             this.propabilityPlot.ScrollGrace = 0D;
@@ -70,6 +72,9 @@ namespace QSBMODWinFormsNF
             // 
             // resoltTextBox
             // 
+            this.resoltTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.resoltTextBox.Location = new System.Drawing.Point(5, 19);
             this.resoltTextBox.Multiline = true;
             this.resoltTextBox.Name = "resoltTextBox";
@@ -79,6 +84,9 @@ namespace QSBMODWinFormsNF
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.resoltTextBox);
             this.groupBox1.Location = new System.Drawing.Point(13, 335);
             this.groupBox1.Name = "groupBox1";
@@ -95,9 +103,8 @@ namespace QSBMODWinFormsNF
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.propabilityPlot);
             this.Controls.Add(this.dependencyPlot);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(745, 725);
             this.Name = "ResultForm";
             this.Text = "QSBMOD14 Отчет";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ResultForm_FormClosed);
@@ -105,6 +112,7 @@ namespace QSBMODWinFormsNF
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

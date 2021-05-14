@@ -5,20 +5,25 @@ namespace QSBMODLibraryNF.Classes
 {
     public class Work
     {
-        // Early start - ES.
-        // Late start - LS.
-        // Early ending - EE.
-        // Late end - LE.
-        // Exp - Expectation - мат ожидание.
-        // Dis - dispersion - дисперсия.
+        // ES - Early start - Раннее начало.
+        // LS - Late start - Позднее начало.
+        // EE - Early ending - Раннее окончание.
+        // LE - Late end - Позднее окончание.
+        // FR - Full reserve - Полный резерв.
+        // PR - Privat reserve - Частный резерв первого вида.
+        // FreeR - Free reserve - Свободный резерв.
+        // IR - Independent reserve - Независимый резерв.
+        // K - Коэффициент напряженности.
+        // Exp - Expectation - Мат. ожидание.
+        // Dis - Dispersion - Дисперсия.
         public bool IsCritical = false;
         public uint CPId = 0;
         public uint Id = 0;
         public readonly float DurationMin, DurationMax, ResourcesMin, ResourcesMax;
         public readonly string Title;
-        public float Duration {get; set;} 
+        public float Duration {get; set;}
         public float Resources = 0,
-            ES = 0, LS = 0, EE = 0, LE = 0, FR = 0, PR = 0, FreeR = 0, IR = 0, K = 0, tgA = 0;
+            ES = 0, LS = 0, EE = 0, LE = 0, FR = 0, PR = 0, FreeR = 0, IR = 0, K = 0, tgA = 0, exp = 0, dis = 0;
         public string FirstEventTitle, SecondEventTitle;
         public ProjectEvent FirstEvent, SecondEvent;    
         public Work(string title, float durationMin, float durationMax,
@@ -44,7 +49,8 @@ namespace QSBMODLibraryNF.Classes
             ResourcesMax = resourcesMax;
             ResourcesMin = resourcesMin;
             Resources = resourcesMin;
-            tgA = (ResourcesMax - ResourcesMin) / (DurationMax - DurationMin);
+            tgA = (ResourcesMax - ResourcesMin) / (DurationMax - DurationMin);            
+            dis = (float)Math.Pow((DurationMax - DurationMin)/6, 2);
         }
         public Work(string title, float duration, float durationMin, float durationMax,
             float resources, float resourcesMin, float resourcesMax,
@@ -73,10 +79,11 @@ namespace QSBMODLibraryNF.Classes
             ResourcesMin = resourcesMin;
             Resources = resources;
             tgA = (ResourcesMax - ResourcesMin) / (DurationMax - DurationMin);
+            dis = (float)Math.Pow((DurationMax - DurationMin) / 6, 2);
         }
         public Work()
         {
-            tgA = 100;
+
         }
     }
 }

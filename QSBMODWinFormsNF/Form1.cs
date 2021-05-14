@@ -12,13 +12,11 @@ namespace QSBMODWinFormsNF
 {
     public partial class Form1 : Form
     {
-        private readonly Dictionary<int, List<int>> bindingDictionary = new Dictionary<int, List<int>>
-        {
-            { 3 , new List<int>{ 1 } },
-            { 5 , new List<int>{ 4 } }
-        };
+        private Color BadColor = Color.FromArgb(255, 200, 255, 200);
+        private Color GoodColor = Color.FromArgb(255, 255, 200, 200);
+        private Color ErrorColor = Color.FromArgb(255, 255, 180, 180);
         private readonly string[] titles = new string[]
-            {"Номер работы","t","Tmin","Tmax","c","Cmin","Cmax","Нач.событие","Кон.событие"};
+            {"Код работы","t","Tmin","Tmax","c","Cmin","Cmax","Нач.событие","Кон.событие"};
         private readonly bool[] isStringTb = new bool[]
             { true, false, false, false, false, false, false, true, true };
         private readonly bool[] isReadOnlyTB = new bool[]
@@ -28,7 +26,6 @@ namespace QSBMODWinFormsNF
             marginHor = 5, marginWid = 7, x = 5, y = 30;
 
         private readonly Stack<TextBox[]> textBoxesRows = new Stack<TextBox[]>();
-
         private bool IsModelChanged = true;
         private EventGraphAnalyzer eventGraphAnalyzerValue;
         public EventGraphAnalyzer EventGraphAnalyzer
@@ -55,23 +52,27 @@ namespace QSBMODWinFormsNF
                     try
                     {
                         var w = new Work(row[0].Text,
-                                        float.Parse(row[1].Text),
-                                        float.Parse(row[2].Text),
-                                        float.Parse(row[3].Text),
-                                        float.Parse(row[4].Text),
-                                        float.Parse(row[5].Text),
-                                        float.Parse(row[6].Text),
+                                        float.Parse(row[1].Text.Replace('.', ',')),
+                                        float.Parse(row[2].Text.Replace('.', ',')),
+                                        float.Parse(row[3].Text.Replace('.', ',')),
+                                        float.Parse(row[4].Text.Replace('.', ',')),
+                                        float.Parse(row[5].Text.Replace('.', ',')),
+                                        float.Parse(row[6].Text.Replace('.', ',')),
                                         row[7].Text,
                                         row[8].Text);
                         eventGraph.AddWork(w);
                     }
                     catch (FormatException)
                     {
-                        throw new FormatException("Строка имела неверный формат");
+                        foreach (var tb in row)
+                            tb.BackColor = ErrorColor;
+                        throw new FormatException("Строка имела неверный формат");                        
                     }
                     catch (ArgumentException)
                     {
-                        throw new ArgumentException("Номера работ должны иметь уникальные названия");
+                        foreach (var tb in row)
+                            tb.BackColor = ErrorColor;
+                        throw new ArgumentException("Номера работ должны иметь уникальные коды");
                     }
                 }
                 return eventGraph;
@@ -139,7 +140,7 @@ namespace QSBMODWinFormsNF
             InitializeComponent();
             errorStripLabel.Font = new Font(FontCollection.Families[0], 9f);
             this.MinimumSize = new Size(GetWidth() + 40 , 500);
-            this.rows.Width = GetWidth();
+            this.tableRowsFlowPanel.Width = GetWidth();
             DrawTableHead();
 
             openToolStripButton.Click += ModelStateChanged;
@@ -149,7 +150,7 @@ namespace QSBMODWinFormsNF
             fullOptimisationToolStripButton.Click += ModelStateSaved;
             OnRowsCountChanged += RowsCountChanged;
         }
-        protected override System.Drawing.Point ScrollToControl(Control activeControl)
+        protected override Point ScrollToControl(Control activeControl)
         {
             return DisplayRectangle.Location;
         }
@@ -197,75 +198,82 @@ namespace QSBMODWinFormsNF
             Loger.Msg("private TextBox[] AddWork()");
             var tbRow = new TextBox[columnsCnt];
             int cursor = x;
+            #region Инициализация текст боксов.
             for (int i = 0; i < columnsCnt; i++)
             {
-                TextBox tb = new TextBox
+                tbRow[i] = new TextBox
                 {
                     Font = new Font(FontCollection.Families[0], 10f),
                     Anchor = ((AnchorStyles)
-                        ((AnchorStyles.Left | AnchorStyles.Top))),
+                    ((AnchorStyles.Left | AnchorStyles.Top))),
                     Name = $"textBox{textBoxesRows.Count + i}",
                     Location = new Point(cursor, y + (textBoxesRows.Count + 1) * (textBoxHeight + marginWid)),
+                    ReadOnly = isReadOnlyTB[i]
                 };
-                tbRow[i] = tb;
-                tb.TextChanged += ModelStateChanged;
-                List<int> bindable;
-                if (bindingDictionary.TryGetValue(i, out bindable))
-                {
-                    foreach (var tbid in bindable)
-                    {
-                        tb.TextChanged += delegate (object sender, EventArgs e)
-                        {
-                            tbRow[tbid].Text = tb.Text;
-                            tbRow[tbid].TextChanged -= ModelStateChanged;
-                        };
-                    }
-                }
-                if (i == 8)
-                {
-                    tbRow[8].TextChanged += delegate (object sender, EventArgs e)
-                    {
-                        tbRow[0].Text = String.Format($"{tbRow[7].Text} - {tbRow[8].Text}");
-                    };
-                    tbRow[7].TextChanged += delegate (object sender, EventArgs e)
-                    {
-                        tbRow[0].Text = String.Format($"{tbRow[7].Text} - {tbRow[8].Text}");
-                    };
-                }
                 if (isStringTb[i])
                 {
-                    tb.Size = new Size(stringTextBoxWidth, textBoxHeight);
+                    tbRow[i].Size = new Size(stringTextBoxWidth, textBoxHeight);
                     cursor += stringTextBoxWidth + marginHor;
                 }
                 else
                 {
-                    tb.Size = new Size(numericTextBoxWidth, textBoxHeight);
+                    tbRow[i].Size = new Size(numericTextBoxWidth, textBoxHeight);
                     cursor += numericTextBoxWidth + marginHor;
                 }
-                if (isReadOnlyTB[i])
-                {
-                    tb.ReadOnly = true;
-                }
-                if (i == 0)
-                {
-                    tb.Text = Convert.ToString(RowsCount + 1);
-                }
-
-                rows.Controls.Add(tb);
             }
-            //foreach (var tb in tbRow)
-            //    Controls.Add(tb);
+            #endregion
+
+            #region Привязка текст боксов.
+            tbRow[0].Text = Convert.ToString(++RowsCount);           
+            tbRow[2].TextChanged += delegate (object sender, EventArgs e)
+            {
+                tbRow[1].Text = GetExpectedT(tbRow[2].Text, tbRow[3].Text);
+            };
+            tbRow[2].TextChanged += ModelStateChanged;
+            tbRow[3].TextChanged += delegate (object sender, EventArgs e)
+            {
+                tbRow[1].Text = GetExpectedT(tbRow[2].Text, tbRow[3].Text);
+            };
+            tbRow[3].TextChanged += ModelStateChanged;
+            tbRow[5].TextChanged += delegate (object sender, EventArgs e)
+            {
+                tbRow[4].Text = tbRow[5].Text;
+            };
+            tbRow[5].TextChanged += ModelStateChanged;
+            tbRow[6].TextChanged += ModelStateChanged;           
+            tbRow[7].TextChanged += delegate (object sender, EventArgs e)
+            {
+                tbRow[0].Text = String.Format($"{tbRow[7].Text} - {tbRow[8].Text}");
+            };
+            tbRow[7].TextChanged += ModelStateChanged;
+            tbRow[8].TextChanged += delegate (object sender, EventArgs e)
+            {
+                tbRow[0].Text = String.Format($"{tbRow[7].Text} - {tbRow[8].Text}");
+            };
+            tbRow[8].TextChanged += ModelStateChanged;
+            tbRow[8].TextChanged += ModelStateChanged;
+            #endregion
+            
+            foreach (var tb in tbRow)
+                tableRowsFlowPanel.Controls.Add(tb);
             textBoxesRows.Push(tbRow);
             RowsCount++;
-
             return tbRow;
+        }
+        private string GetExpectedT(string Tmin, string Tmax)
+        {
+            if (float.TryParse(Tmin.Replace('.', ','), out float tmin) &&
+                float.TryParse(Tmax.Replace('.', ','), out float tmax))
+                return Convert.ToString((2 * tmin + 3 * tmax) / 5);
+            else
+                return Tmax;
         }
         private TextBox[] DelLastWork()
         {
             Loger.Msg("private TextBox[] DelLastWork()");
             var delRow = textBoxesRows.Pop();
             foreach (var tb in delRow)
-                rows.Controls.Remove(tb);
+                tableRowsFlowPanel.Controls.Remove(tb);
             RowsCount--;
             IsModelChanged = true;
             errorStripLabel.Text = "";
@@ -286,12 +294,19 @@ namespace QSBMODWinFormsNF
         private void ReturnCoefs()
         {
             Loger.Msg("private void ReturnCoefs()");
-            foreach (var row in textBoxesRows)
+            foreach (var tbRow in textBoxesRows)
             {
-                row[1].Text = row[3].Text;
-                row[1].BackColor = TextBox.DefaultBackColor;
-                row[4].Text = row[5].Text;
-                row[4].BackColor = TextBox.DefaultBackColor;
+                tbRow[0].BackColor = TextBox.DefaultBackColor;
+                tbRow[1].Text = GetExpectedT(tbRow[2].Text, tbRow[3].Text);
+                tbRow[1].BackColor = TextBox.DefaultBackColor;
+                tbRow[2].BackColor = Color.White;
+                tbRow[3].BackColor = Color.White;
+                tbRow[4].Text = tbRow[5].Text;
+                tbRow[4].BackColor = TextBox.DefaultBackColor;
+                tbRow[5].BackColor = Color.White;
+                tbRow[6].BackColor = Color.White;
+                tbRow[7].BackColor = Color.White;
+                tbRow[8].BackColor = Color.White;
             };
         }
         private void UpdateCoefs()
@@ -301,14 +316,14 @@ namespace QSBMODWinFormsNF
             int i = 0;
             foreach (var w in EventGraphAnalyzer.Works)
             {
-                if (tbr[i][1].Text != Convert.ToString(Math.Round(w.Duration, 2)))
+                if (tbr[i][1].Text.Replace('.', ',') != Convert.ToString(Math.Round(w.Duration, 2)))
                 {
-                    tbr[i][1].BackColor = Color.FromArgb(255, 191, 255, 196);
+                    tbr[i][1].BackColor = BadColor;
                     tbr[i][1].Text = Convert.ToString(Math.Round(w.Duration, 2));
                 }
-                if (tbr[i][4].Text != Convert.ToString(Math.Round(w.Resources, 2)))
+                if (tbr[i][4].Text.Replace('.', ',') != Convert.ToString(Math.Round(w.Resources, 2)))
                 {
-                    tbr[i][4].BackColor = Color.FromArgb(255, 255, 191, 191);
+                    tbr[i][4].BackColor = GoodColor;
                     tbr[i][4].Text = Convert.ToString(Math.Round(w.Resources, 2));
                 }
                 i++;
