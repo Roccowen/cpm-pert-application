@@ -34,7 +34,7 @@ namespace QSBMODWinFormsNF
                 return fontCollectionValue;
             }
         }
-        public ResultForm(Form1 parentForm, List<(float t, float c)> callback)
+        public ResultForm(Form1 parentForm)
         {
             ParentForm = parentForm;
             InitializeComponent();
@@ -43,14 +43,18 @@ namespace QSBMODWinFormsNF
             resoltTextBox.Font = new Font("Consolas", 10f);
             resoltTextBox.Text = GetTextResult();
 
-            DrawDependencyPlot(callback);
-            DrawPropabilytyPlot();
+            DrawDependencyPlot(parentForm.EventGraphAnalyzer.CallbackTC);
+            DrawPropabilytyPlot(parentForm.EventGraphAnalyzer.CallbackTP);
         }
         private string GetTextResult()
         {
             List<string> result = new List<string>();
-            result.Add($"  КП продолжительность : {ParentForm.EventGraphAnalyzer.Duration}");
-            result.Add($"\r\n  КП стоимость : {ParentForm.EventGraphAnalyzer.Cost}");
+
+            result.Add($"\r\n  КП минимальная продолжительность : {Math.Round(ParentForm.EventGraphAnalyzer.DurationMin, 2)}");
+            result.Add($"\r\n  КП номинальная продолжительность : {Math.Round(ParentForm.EventGraphAnalyzer.DurationNom, 2)}");
+            result.Add($"\r\n  КП продолжительность после оптимизации : {Math.Round(ParentForm.EventGraphAnalyzer.Duration, 2)}");
+            result.Add($"\r\n  КП минимальная стоимость : {Math.Round(ParentForm.EventGraphAnalyzer.CostMin, 2)}");
+            result.Add($"\r\n  КП стоимость после оптимизации : {Math.Round(ParentForm.EventGraphAnalyzer.Cost, 2)}");            
             result.Add("\r\n  КП : ");
             foreach (var w in ParentForm.EventGraphAnalyzer.CriticalWorks)
                 result.Add($"{w.Title} ");
@@ -81,7 +85,7 @@ namespace QSBMODWinFormsNF
             result.Add($"\r\n\r\n  Количество памяти текущего процесса : {Process.GetCurrentProcess().PrivateMemorySize64 / 1024} kB");
             return string.Join("", result);
         }
-        private void DrawDependencyPlot(List<(float t, float c)> callback)
+        private void DrawDependencyPlot(List<(float t, float c)> callbackTC)
         {
             GraphPane mainPane = dependencyPlot.GraphPane;
             mainPane.Title.Text = "";
@@ -101,14 +105,14 @@ namespace QSBMODWinFormsNF
             mainPane.YAxis.MajorGrid.IsVisible = true;
 
             PointPairList pointList = new PointPairList();
-            foreach (var c in callback)
+            foreach (var c in callbackTC)
                 pointList.Add(c.c, c.t);
             LineItem myCurve = mainPane.AddCurve("Зависимость t от c", pointList, Color.Blue, SymbolType.None);
             myCurve.Label.FontSpec = PlotLabelsFont;
             dependencyPlot.AxisChange();
             dependencyPlot.Invalidate();
         }
-        private void DrawPropabilytyPlot()
+        private void DrawPropabilytyPlot(List<(float t, float p)>  callbackTP)
         {
             GraphPane mainPane = propabilityPlot.GraphPane;
             mainPane.Title.Text = "";
@@ -128,12 +132,12 @@ namespace QSBMODWinFormsNF
             mainPane.YAxis.MajorGrid.IsVisible = true;
 
             PointPairList pointList = new PointPairList();
-            //foreach (var c in callback)
-            //    pointList.Add(c.c, c.t);
+            foreach (var c in callbackTP)
+                pointList.Add(c.t, c.p);
             LineItem myCurve = mainPane.AddCurve("Вероятность выполнения за t", pointList, Color.Red, SymbolType.None);
             myCurve.Label.FontSpec = PlotLabelsFont;
-            dependencyPlot.AxisChange();
-            dependencyPlot.Invalidate();
+            propabilityPlot.AxisChange();
+            propabilityPlot.Invalidate();
         }
         private void ResultForm_FormClosed(object sender, FormClosedEventArgs e)
         {

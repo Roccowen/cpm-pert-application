@@ -106,7 +106,7 @@ namespace QSBMODWinFormsNF
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(745, 725);
             this.Name = "ResultForm";
-            this.Text = "QSBMOD14 Отчет";
+            this.Text = "QSBMOD6 Отчет";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ResultForm_FormClosed);
             this.Load += new System.EventHandler(this.ResultForm_Load);
             this.groupBox1.ResumeLayout(false);

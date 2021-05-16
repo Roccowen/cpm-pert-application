@@ -12,9 +12,9 @@ namespace QSBMODWinFormsNF
 {
     public partial class Form1 : Form
     {
-        private Color BadColor = Color.FromArgb(255, 200, 255, 200);
-        private Color GoodColor = Color.FromArgb(255, 255, 200, 200);
-        private Color ErrorColor = Color.FromArgb(255, 255, 180, 180);
+        private readonly Color BadColor = Color.FromArgb(255, 200, 255, 200);
+        private readonly Color GoodColor = Color.FromArgb(255, 255, 200, 200);
+        private readonly Color ErrorColor = Color.FromArgb(255, 255, 180, 180);
         private readonly string[] titles = new string[]
             {"Код работы","t","Tmin","Tmax","c","Cmin","Cmax","Нач.событие","Кон.событие"};
         private readonly bool[] isStringTb = new bool[]
@@ -133,7 +133,7 @@ namespace QSBMODWinFormsNF
                 return fontCollectionValue;
             }
         }
-        public event EventHandler OnRowsCountChanged;
+        private event EventHandler OnRowsCountChanged;
         public Form1()
         {
             Loger.Msg("public Form1()");
@@ -227,12 +227,12 @@ namespace QSBMODWinFormsNF
             tbRow[0].Text = Convert.ToString(++RowsCount);           
             tbRow[2].TextChanged += delegate (object sender, EventArgs e)
             {
-                tbRow[1].Text = GetExpectedT(tbRow[2].Text, tbRow[3].Text);
+                tbRow[1].Text = GetExpectedTUI(tbRow[2].Text, tbRow[3].Text);
             };
             tbRow[2].TextChanged += ModelStateChanged;
             tbRow[3].TextChanged += delegate (object sender, EventArgs e)
             {
-                tbRow[1].Text = GetExpectedT(tbRow[2].Text, tbRow[3].Text);
+                tbRow[1].Text = GetExpectedTUI(tbRow[2].Text, tbRow[3].Text);
             };
             tbRow[3].TextChanged += ModelStateChanged;
             tbRow[5].TextChanged += delegate (object sender, EventArgs e)
@@ -260,7 +260,7 @@ namespace QSBMODWinFormsNF
             RowsCount++;
             return tbRow;
         }
-        private string GetExpectedT(string Tmin, string Tmax)
+        private string GetExpectedTUI(string Tmin, string Tmax)
         {
             if (float.TryParse(Tmin.Replace('.', ','), out float tmin) &&
                 float.TryParse(Tmax.Replace('.', ','), out float tmax))
@@ -297,7 +297,7 @@ namespace QSBMODWinFormsNF
             foreach (var tbRow in textBoxesRows)
             {
                 tbRow[0].BackColor = TextBox.DefaultBackColor;
-                tbRow[1].Text = GetExpectedT(tbRow[2].Text, tbRow[3].Text);
+                tbRow[1].Text = GetExpectedTUI(tbRow[2].Text, tbRow[3].Text);
                 tbRow[1].BackColor = TextBox.DefaultBackColor;
                 tbRow[2].BackColor = Color.White;
                 tbRow[3].BackColor = Color.White;
@@ -394,7 +394,7 @@ namespace QSBMODWinFormsNF
             try
             {
                 Loger.Msg("private void OptimiseToolStripButton_Click(object sender, EventArgs e)");
-                EventGraphAnalyzer.OptimizeForOneDay();
+                EventGraphAnalyzer.Optimize();
                 UpdateCoefs();
             }
             catch (Exception ex)
@@ -454,7 +454,7 @@ namespace QSBMODWinFormsNF
             try
             {
                 Loger.Msg("private void ResultToolStripButton_Click(object sender, EventArgs e)");
-                var rf = new ResultForm(this, EventGraphAnalyzer.callback);
+                var rf = new ResultForm(this);
                 rf.Show();
             }
             catch (Exception ex)
@@ -468,7 +468,7 @@ namespace QSBMODWinFormsNF
             try
             {
                 Loger.Msg("private void FullOptimisationToolStripButton_Click(object sender, EventArgs e)");
-                EventGraphAnalyzer.FullOptimize();
+                EventGraphAnalyzer.OptimizeFull();
                 UpdateCoefs();
             }
             catch (Exception ex)

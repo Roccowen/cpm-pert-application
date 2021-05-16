@@ -62,8 +62,10 @@ namespace ConsoleApp
             Console.WriteLine($"  время : {timer.ElapsedMilliseconds / 1000f} s");
             Console.WriteLine($"  память : {Process.GetCurrentProcess().PrivateMemorySize64 / 1024} kB");
         }
+
         static void Main(string[] args)
         {
+
             //var test1 = new List<Work> {
             //    new Work("1-2", 3,  5,    23,    26.2f, "1", "2"),
             //    new Work("1-3", 1,  2,    9.8f,  12,    "1", "3"),
@@ -75,26 +77,6 @@ namespace ConsoleApp
             //    new Work("4-6", 5,  6,    17.2f, 19,    "4", "6"),
             //    new Work("5-6", 5,  7,    34.6f, 41.1f, "5", "6")};
             //Test(test1);
-            for (int i = 0; i < 9; i++)
-            {
-                switch (i)
-                {
-                    case 0:
-                        Console.WriteLine(i);
-                        break;
-                    case 1:
-                        Console.WriteLine(i);
-                        break;
-                    case 2:
-                        Console.WriteLine(i);
-                        break;
-                    case 5:
-                        Console.WriteLine(i);
-                        break;
-                    default:
-                        break;
-                }
-            }
 
             //double[,] testSimp1 = {
             //                    {25, -3,  5},

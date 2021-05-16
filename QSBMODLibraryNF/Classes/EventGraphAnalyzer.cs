@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MathNet.Numerics.Distributions;
 using System.Text;
+using System.Web.UI.DataVisualization;
+using System.Web.UI.DataVisualization.Charting;
 
 namespace QSBMODLibraryNF.Classes
 {
     public class EventGraphAnalyzer
     {
         private ProjectEvent primaryEvent, finalEvent;
-        
+
+        private float durationNomValue = 0;
         private readonly EventGraph currentEventGraph;                
         private readonly List<Work> orderedProjectWorks, criticalWorks;
-        private readonly List<ProjectEvent> orderedProjectPath, criticalPath;               
+        private readonly List<ProjectEvent> orderedProjectEvents, criticalPath;               
         private readonly List<List<Work>> worksStages;
-        public readonly List<(float t, float c)> callback;
-        private bool isOptimized = false;
+        public readonly List<(float t, float c)> CallbackTC;
+        public readonly List<(float t, float p)> CallbackTP;
         public int WorksCount
         {
             get
@@ -26,28 +30,49 @@ namespace QSBMODLibraryNF.Classes
         {
             get
             {
-                try
-                {
-                    return orderedProjectWorks.Sum(g => g.Resources);
-                }
-                catch (System.Exception)
-                {
-                    return 0;
-                }
+                return orderedProjectWorks.Sum(g => g.Resources);
+            }
+        }
+        public float CostMin
+        {
+            get
+            {
+                return orderedProjectWorks.Sum(g => g.ResourcesMin);
             }
         }
         public float Duration
         {
             get
             {
-                try
-                {
-                    return criticalWorks.Sum(g => g.Duration);
-                }
-                catch (System.Exception)
-                {
-                    return 0;
-                }
+                return criticalWorks.Sum(g => g.Duration);
+            }
+        }
+        public float DurationMax
+        {
+            get
+            {
+                return criticalWorks.Sum(g => g.DurationMax);
+            }
+        }
+        public float DurationMin
+        {
+            get
+            {
+                return criticalWorks.Sum(g => g.DurationMin);
+            }
+        }      
+        public float DurationNom
+        {
+            get
+            {
+                return durationNomValue;
+            }
+        }
+        public float Dispersion
+        {
+            get
+            {
+                return criticalWorks.Sum(g => g.dis);
             }
         }
         public IEnumerable<ProjectEvent> ProjectEvents
@@ -79,14 +104,15 @@ namespace QSBMODLibraryNF.Classes
             criticalWorks = new List<Work>();
             criticalPath = new List<ProjectEvent>();
             worksStages = new List<List<Work>>();
-            callback = new List<(float t, float c)>();
+            CallbackTC = new List<(float t, float c)>();
+            CallbackTP = new List<(float t, float c)>();
             
             currentEventGraph = evGraph;
-            orderedProjectPath = new List<ProjectEvent>(currentEventGraph.EventsByTitle.Count);
+            orderedProjectEvents = new List<ProjectEvent>(currentEventGraph.EventsByTitle.Count);
             orderedProjectWorks = new List<Work>(currentEventGraph.WorksByTitle.Count);
             
             Init();
-            callback.Add((Cost, Duration));
+            CallbackTC.Add((Cost, Duration));
         }
         private void CheckStartAndFin()
         {
@@ -105,7 +131,7 @@ namespace QSBMODLibraryNF.Classes
         {
             CheckStartAndFin();          
             uint id = 0u, cpid = 0u;
-            var visitideEvents = new HashSet<ProjectEvent>();
+            var visitedEvents = new HashSet<ProjectEvent>();
             var events = new List<ProjectEvent>
             {
                 primaryEvent
@@ -119,19 +145,18 @@ namespace QSBMODLibraryNF.Classes
                 {
                     tempWorks.AddRange(currEvent.FollowingWorks);
                     currEvent.FollowingWorks.ForEach(w => w.CPId = cpid);
-
-                    if (visitideEvents.Add(currEvent))
+                    if (visitedEvents.Add(currEvent))
                     {
-                        currEvent.Id = id++;
-                        orderedProjectPath.Add(currEvent);
+                        currEvent.Id = ++id;
+                        orderedProjectEvents.Add(currEvent);
                         orderedProjectWorks.AddRange(currEvent.FollowingWorks);
                     }
                     currEvent.FollowingWorks.Where(w => w.SecondEvent.PreviousWorks
-                                                .All(v => visitideEvents
-                                                    .Contains(v.FirstEvent)))
-                                                .ToList()
-                                             .ForEach(v => tempEvents
-                                                .Add(v.SecondEvent));
+                        .All(v => visitedEvents
+                            .Contains(v.FirstEvent)))
+                        .ToList()
+                     .ForEach(v => tempEvents
+                        .Add(v.SecondEvent));
                 }
                 events = tempEvents;
 
@@ -141,17 +166,19 @@ namespace QSBMODLibraryNF.Classes
                     cpid++;
                 }
             }
-            EventESLSCalc();
+            CalcEventESLS();
             FindCriticalPath();
-            WorksCoefsCalc();
+            durationNomValue = criticalWorks.Sum(g => g.Duration);
+            CalcWorksCoefs();
+            CalcProbabilityDuration();
         }
-        private void EventESLSCalc()
+        private void CalcEventESLS()
         {
-            for (int i = 1; i < orderedProjectPath.Count; i++)
-                orderedProjectPath[i].ES = orderedProjectPath[i].PreviousWorks.Max(fw => fw.Duration + fw.FirstEvent.ES);
+            for (int i = 1; i < orderedProjectEvents.Count; i++)
+                orderedProjectEvents[i].ES = orderedProjectEvents[i].PreviousWorks.Max(fw => fw.Duration + fw.FirstEvent.ES);
             finalEvent.LS = finalEvent.ES;
-            for (int i = 2; i < orderedProjectPath.Count; i++)
-                orderedProjectPath[orderedProjectPath.Count - i].LS = orderedProjectPath[orderedProjectPath.Count - i].FollowingWorks.Min(fw => fw.SecondEvent.LS - fw.Duration);
+            for (int i = 2; i < orderedProjectEvents.Count; i++)
+                orderedProjectEvents[orderedProjectEvents.Count - i].LS = orderedProjectEvents[orderedProjectEvents.Count - i].FollowingWorks.Min(fw => fw.SecondEvent.LS - fw.Duration);
 
         }
         private void FindCriticalPath()
@@ -173,7 +200,7 @@ namespace QSBMODLibraryNF.Classes
                 }
             }
         }
-        private void WorksCoefsCalc()
+        private void CalcWorksCoefs()
         {
             foreach (var w in orderedProjectWorks)
             {
@@ -192,32 +219,61 @@ namespace QSBMODLibraryNF.Classes
                     w.K = 1 - w.FR / (Cost - wFromCP.Duration);
             }
         }
-        public void OptimizeForOneDay()
+        private float NormalDistribution(float x, float avg=0, float avgDev=1, float integ=1)
+        {
+            return (float)(1 / (avgDev * Math.Sqrt(2 * Math.PI)) * Math.Exp(-Math.Pow((x - avg), 2) / (2 * Math.Pow(avgDev, 2))));
+        }
+        private void CalcProbabilityDuration()
+        {
+            var callbackTemp = new List<(float t, float p)>();
+            float DMIN = (float)Math.Floor(DurationMin), DMAX = (float)Math.Ceiling(DurationMax);
+            for (float D = DMIN; D < DMAX; D += 0.01F)
+                callbackTemp.Add((D, NormalDistribution(D, DurationNom, Dispersion)));
+            float probTmp;
+            for (int i = 0; i < callbackTemp.Count; i++)
+            {
+                probTmp = 0;
+                for (int j = 0; j < i; j++)
+                    probTmp += callbackTemp[j].p;
+                CallbackTP.Add((callbackTemp[i].t, probTmp));
+            }
+        }
+        public float Optimize(float t=1)
         {
             Work minimalTgaWork = new Work
             {
                 tgA = float.MaxValue
-            };             
+            };
+            //criticalWorks.ForEach(
+            //    w =>
+            //    minimalTgaWork = (
+            //          w.tgA < minimalTgaWork.tgA &&
+            //          w.DurationMin <= w.Duration - t &&
+            //          Math.Round(w.ResourcesMax, 2) >= Math.Round(w.Resources + w.tgA * t, 2))
+            //          ? w : minimalTgaWork);
             criticalWorks.ForEach(
                 w =>
-                minimalTgaWork = (
+                minimalTgaWork = 
                       w.tgA < minimalTgaWork.tgA &&
-                      w.DurationMin <= w.Duration - 1 &&
-                      Math.Round(w.ResourcesMax, 2) >= Math.Round(w.Resources + w.tgA, 2))
+                      w.DurationMin <= w.Duration - t
                       ? w : minimalTgaWork);
             if (minimalTgaWork.IsCritical)
             {
-                minimalTgaWork.Duration -= 1;
-                minimalTgaWork.Resources += minimalTgaWork.tgA;
-                callback.Add((Cost, Duration));
+                minimalTgaWork.Duration -= t;
+                minimalTgaWork.Resources += minimalTgaWork.tgA * t;
+                CallbackTC.Add((Cost, Duration));
             }
-            else
-                isOptimized = true;
+            return Duration;
         }
-        public void FullOptimize()
+        public void OptimizeFull()
         {
-            while (!isOptimized)
-                OptimizeForOneDay();
+            float prevOpt, currOpt = 0;
+            do
+            {
+                prevOpt = currOpt;
+                currOpt = Optimize(0.1F);
+            } 
+            while (prevOpt != currOpt);              
         }
     }
 }

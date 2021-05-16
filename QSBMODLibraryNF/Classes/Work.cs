@@ -26,32 +26,6 @@ namespace QSBMODLibraryNF.Classes
             ES = 0, LS = 0, EE = 0, LE = 0, FR = 0, PR = 0, FreeR = 0, IR = 0, K = 0, tgA = 0, exp = 0, dis = 0;
         public string FirstEventTitle, SecondEventTitle;
         public ProjectEvent FirstEvent, SecondEvent;    
-        public Work(string title, float durationMin, float durationMax,
-                    float resourcesMin, float resourcesMax,
-                    string startEventTitle, string secondEventTitle)
-        {
-            
-            if (title.Contains(';') || startEventTitle.Contains(';') || secondEventTitle.Contains(';'))
-                throw new InvalidOperationException("Названия не могут содержать \";\"");
-            if (durationMax < 0 || durationMin < 0 || resourcesMax < 0 || resourcesMin < 0)
-                throw new InvalidOperationException("Значения должны быть положительными");
-            if (durationMax < durationMin || resourcesMax < resourcesMin)
-                throw new InvalidOperationException("Tmax должно быть больше чем Tmin или Cmax чем Cmin");
-            if (startEventTitle == secondEventTitle)
-                throw new InvalidOperationException("Начальное событие и конечное, должны быть разными");
-
-            Title = title;
-            FirstEventTitle = startEventTitle;
-            SecondEventTitle = secondEventTitle;
-            DurationMax = durationMax;
-            DurationMin = durationMin;
-            Duration = durationMax;
-            ResourcesMax = resourcesMax;
-            ResourcesMin = resourcesMin;
-            Resources = resourcesMin;
-            tgA = (ResourcesMax - ResourcesMin) / (DurationMax - DurationMin);            
-            dis = (float)Math.Pow((DurationMax - DurationMin)/6, 2);
-        }
         public Work(string title, float duration, float durationMin, float durationMax,
             float resources, float resourcesMin, float resourcesMax,
             string startEventTitle, string secondEventTitle)
@@ -80,6 +54,7 @@ namespace QSBMODLibraryNF.Classes
             Resources = resources;
             tgA = (ResourcesMax - ResourcesMin) / (DurationMax - DurationMin);
             dis = (float)Math.Pow((DurationMax - DurationMin) / 6, 2);
+            exp = (DurationMax + DurationMin + 4 * Duration) / 6;
         }
         public Work()
         {

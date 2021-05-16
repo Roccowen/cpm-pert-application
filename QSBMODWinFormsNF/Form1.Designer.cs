@@ -183,7 +183,7 @@ namespace QSBMODWinFormsNF
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
-            this.Text = "QSBMOD14";
+            this.Text = "QSBMOD6";
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
